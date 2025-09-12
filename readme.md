@@ -20,3 +20,8 @@ El sistema permitirá administrar usuarios de una empresa, facilitando operacion
 ---
 
 Proyecto académico - IU Digital de Antioquia
+
+
+---
+
+Nota: Sergio
