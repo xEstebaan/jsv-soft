@@ -23,5 +23,3 @@ Proyecto académico - IU Digital de Antioquia
 
 
 ---
-
-Nota: Sergio
