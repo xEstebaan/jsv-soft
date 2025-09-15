@@ -4,6 +4,7 @@ from flask_login import LoginManager
 from flask_migrate import Migrate
 from config import Config
 from .models import Usuario
+from .routers.auth import auth_bp
 
 db = SQLAlchemy()
 login_manager = LoginManager()
@@ -22,6 +23,11 @@ def create_app():
     migrate.init_app(app, db)
 
     # Registrar blueprints aquí
+    app.register_blueprint(auth_bp)
+
+    @app.route("/")
+    def index():
+        return "OK"
 
     return app
 
