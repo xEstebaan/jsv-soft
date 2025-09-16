@@ -26,7 +26,7 @@ def login():
             next_page = request.args.get("next")
             return redirect(next_page or url_for("index"))
         flash("Credenciales inválidas", "danger")
-    return render_template("auth/login.html", form=form)
+    return render_template("auth/form.html", form=form, form_type="login")
 
 
 @auth_bp.route("/register", methods=["GET", "POST"])
@@ -36,29 +36,35 @@ def register():
 
     form = RegistrationForm()
     if form.validate_on_submit():
-        persona = Persona(
-            primer_nombre=form.primer_nombre.data,
-            segundo_nombre=form.segundo_nombre.data or None,
-            primer_apellido=form.primer_apellido.data,
-            segundo_apellido=form.segundo_apellido.data or None,
-            documento=form.documento.data,
-            correo=form.correo.data,
-            celular=form.celular.data or None,
-        )
-        db.session.add(persona)
-        db.session.flush()
+        try:
+            persona = Persona(
+                primer_nombre=form.primer_nombre.data,
+                segundo_nombre=form.segundo_nombre.data or None,
+                primer_apellido=form.primer_apellido.data,
+                segundo_apellido=form.segundo_apellido.data or None,
+                documento=form.documento.data,
+                correo=form.correo.data,
+                celular=form.celular.data or None,
+            )
+            db.session.add(persona)
+            db.session.flush()
 
-        usuario = Usuario(
-            id_persona=persona.id_persona,
-            id_rol=2,
-            contrasena=generate_password_hash(form.contrasena.data),
-        )
-        db.session.add(usuario)
-        db.session.commit()
-        flash("Registro exitoso. Ahora puedes iniciar sesión.", "success")
-        return redirect(url_for("auth.login"))
-
-    return render_template("auth/register.html", form=form)
+            usuario = Usuario(
+                id_persona=persona.id_persona,
+                id_rol=2,
+                contrasena=generate_password_hash(form.contrasena.data),
+            )
+            db.session.add(usuario)
+            db.session.commit()
+            flash("Registro exitoso. Ahora puedes iniciar sesión.", "success")
+            return redirect(url_for("auth.login"))
+        except Exception as e:
+            db.session.rollback()
+            flash(
+                "Error al registrar. Verifica que el correo y documento no estén usados.",
+                "danger",
+            )
+    return render_template("auth/form.html", form=form, form_type="register")
 
 
 @auth_bp.route("/logout")

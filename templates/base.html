@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}{% endblock %}</title>
+  </head>
+  <body>
+    <nav>
+      <a href="{{ url_for('index') }}">Inicio</a>
+      {% if current_user.is_authenticated %}
+      <span> | Sesión: {{ current_user.get_id() }}</span>
+      <a href="{{ url_for('auth.logout') }}">Salir</a>
+      {% else %}
+      <a href="{{ url_for('auth.login') }}">Entrar</a>
+      <a href="{{ url_for('auth.register') }}">Registro</a>
+      {% endif %}
+    </nav>
+
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %}
+    <ul>
+      {% for category, message in messages %}
+      <li>{{ category }}: {{ message }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %} {% endwith %}
+
+    <main>{% block content %}{% endblock %}</main>
+  </body>
+</html>
