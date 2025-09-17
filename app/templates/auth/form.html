@@ -1,0 +1,83 @@
+{% extends "base.html" %} {% block title %}{% if form_type == 'login' %}Iniciar
+sesión{% else %}Crear cuenta{% endif %}{% endblock %} {% block content %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/auth.css') }}"
+/>
+
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <img
+        src="{{ url_for('static', filename='img/logo.png') }}"
+        alt="JSV Soft"
+      />
+      <p class="auth-subtitle">
+        {% if form_type == 'login' %}Inicia sesión para acceder a tu panel{%
+        else %}Crea tu cuenta para comenzar{% endif %}
+      </p>
+    </div>
+
+    <form method="post">
+      {{ form.hidden_tag() }} {% if form_type == 'register' %}
+      <div class="form-group">
+        <label>Primer nombre</label>
+        {{ form.primer_nombre() }}
+      </div>
+      <div class="form-group">
+        <label>Segundo nombre</label>
+        {{ form.segundo_nombre() }}
+      </div>
+      <div class="form-group">
+        <label>Primer apellido</label>
+        {{ form.primer_apellido() }}
+      </div>
+      <div class="form-group">
+        <label>Segundo apellido</label>
+        {{ form.segundo_apellido() }}
+      </div>
+      <div class="form-group">
+        <label>Documento</label>
+        {{ form.documento() }}
+      </div>
+      <div class="form-group">
+        <label>Celular</label>
+        {{ form.celular() }}
+      </div>
+      {% endif %}
+
+      <div class="form-group">
+        <label>Correo</label>
+        {{ form.correo(size=32) }}
+      </div>
+      <div class="form-group">
+        <label>Contraseña</label>
+        {{ form.contrasena() }}
+      </div>
+
+      {% if form_type == 'login' %}
+      <div class="form-group">{{ form.recordar() }} Recuérdame</div>
+      {% else %}
+      <div class="form-group">
+        <label>Confirmar contraseña</label>
+        {{ form.confirmar_contrasena() }}
+      </div>
+      {% endif %}
+
+      <div class="auth-actions">
+        <button type="submit" class="btn-primary">
+          {% if form_type == 'login' %}Iniciar sesión{% else %}Crear cuenta{%
+          endif %}
+        </button>
+      </div>
+    </form>
+
+    <p class="helper">
+      {% if form_type == 'login' %} ¿No tienes una cuenta?
+      <a href="{{ url_for('auth.register') }}">Regístrate</a> {% else %} ¿Ya
+      tienes cuenta? <a href="{{ url_for('auth.login') }}">Inicia sesión</a>
+      {% endif %}
+    </p>
+  </div>
+</div>
+{% endblock %}

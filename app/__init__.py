@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate
@@ -10,7 +10,7 @@ migrate = Migrate()
 
 
 def create_app():
-    app = Flask(__name__, template_folder="../templates")
+    app = Flask(__name__)  # usa app/templates y app/static por defecto
     app.config.from_object(Config)
 
     db.init_app(app)
@@ -28,6 +28,14 @@ def create_app():
     @app.route("/")
     def index():
         return "OK"
+
+    @app.route("/favicon.ico")
+    def favicon():
+        return send_from_directory(
+            app.static_folder + "/img",
+            "favicon.ico",
+            mimetype="image/vnd.microsoft.icon",
+        )
 
     return app
 
