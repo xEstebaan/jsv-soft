@@ -1,0 +1,377 @@
+{% extends "base.html" %} {% block title %}Mi Perfil{% endblock %} {% block
+stylesheets %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/profile.css') }}"
+/>
+{% endblock %} {% block content %}
+<div class="profile-container">
+  <div class="profile-header">
+    <h1>Mi Perfil</h1>
+    <p>Gestiona tu información personal y configuración de cuenta</p>
+  </div>
+
+  <div class="profile-content">
+    <!-- Sección de Datos Personales -->
+    <div class="profile-section">
+      <div class="section-header">
+        <h2>Datos Personales</h2>
+        <button class="btn btn-secondary" onclick="toggleEditMode()">
+          <i class="icon-edit"></i> Editar
+        </button>
+      </div>
+
+      <div class="section-content">
+        <div class="info-grid">
+          <div class="info-item">
+            <label>Primer Nombre:</label>
+            <span id="primer-nombre">{{ persona.primer_nombre }}</span>
+            <input
+              type="text"
+              id="edit-primer-nombre"
+              value="{{ persona.primer_nombre }}"
+              style="display: none"
+              class="form-control"
+            />
+          </div>
+
+          <div class="info-item">
+            <label>Segundo Nombre:</label>
+            <span id="segundo-nombre"
+              >{{ persona.segundo_nombre or 'No especificado' }}</span
+            >
+            <input
+              type="text"
+              id="edit-segundo-nombre"
+              value="{{ persona.segundo_nombre or '' }}"
+              style="display: none"
+              class="form-control"
+            />
+          </div>
+
+          <div class="info-item">
+            <label>Primer Apellido:</label>
+            <span id="primer-apellido">{{ persona.primer_apellido }}</span>
+            <input
+              type="text"
+              id="edit-primer-apellido"
+              value="{{ persona.primer_apellido }}"
+              style="display: none"
+              class="form-control"
+            />
+          </div>
+
+          <div class="info-item">
+            <label>Segundo Apellido:</label>
+            <span id="segundo-apellido"
+              >{{ persona.segundo_apellido or 'No especificado' }}</span
+            >
+            <input
+              type="text"
+              id="edit-segundo-apellido"
+              value="{{ persona.segundo_apellido or '' }}"
+              style="display: none"
+              class="form-control"
+            />
+          </div>
+
+          <div class="info-item">
+            <label>Documento:</label>
+            <span id="documento">{{ persona.documento }}</span>
+            <input
+              type="text"
+              id="edit-documento"
+              value="{{ persona.documento }}"
+              style="display: none"
+              class="form-control"
+            />
+          </div>
+
+          <div class="info-item">
+            <label>Correo Electrónico:</label>
+            <span id="correo">{{ persona.correo }}</span>
+            <input
+              type="email"
+              id="edit-correo"
+              value="{{ persona.correo }}"
+              style="display: none"
+              class="form-control"
+            />
+          </div>
+
+          <div class="info-item">
+            <label>Celular:</label>
+            <span id="celular">{{ persona.celular or 'No especificado' }}</span>
+            <input
+              type="text"
+              id="edit-celular"
+              value="{{ persona.celular or '' }}"
+              style="display: none"
+              class="form-control"
+            />
+          </div>
+
+          <div class="info-item">
+            <label>Fecha de Registro:</label>
+            <span
+              >{{ persona.fecha_creacion.strftime('%d/%m/%Y %H:%M') if
+              persona.fecha_creacion else 'No disponible' }}</span
+            >
+          </div>
+        </div>
+
+        <div class="edit-actions" id="edit-actions" style="display: none">
+          <button class="btn btn-primary" onclick="savePersonalData()">
+            <i class="icon-save"></i> Guardar Cambios
+          </button>
+          <button class="btn btn-secondary" onclick="cancelEdit()">
+            <i class="icon-cancel"></i> Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección de Cambio de Contraseña -->
+    <div class="profile-section">
+      <div class="section-header">
+        <h2>Cambio de Contraseña</h2>
+      </div>
+
+      <div class="section-content">
+        <form id="password-form" class="password-form">
+          <div class="form-group">
+            <label for="current-password">Contraseña Actual:</label>
+            <input
+              type="password"
+              id="current-password"
+              name="current-password"
+              class="form-control"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="new-password">Nueva Contraseña:</label>
+            <input
+              type="password"
+              id="new-password"
+              name="new-password"
+              class="form-control"
+              required
+              minlength="6"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="confirm-password">Confirmar Nueva Contraseña:</label>
+            <input
+              type="password"
+              id="confirm-password"
+              name="confirm-password"
+              class="form-control"
+              required
+              minlength="6"
+            />
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+              <i class="icon-key"></i> Cambiar Contraseña
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Sección de PIN de Acceso -->
+    <div class="profile-section">
+      <div class="section-header">
+        <h2>PIN de Acceso</h2>
+        <button class="btn btn-info" onclick="togglePinVisibility()">
+          <i class="icon-eye" id="pin-eye-icon"></i>
+          <span id="pin-toggle-text">Mostrar PIN</span>
+        </button>
+      </div>
+
+      <div class="section-content">
+        <div class="pin-display">
+          <div class="pin-container">
+            <span id="pin-value" class="pin-hidden">•••••••</span>
+            <span id="pin-actual" style="display: none">{{ pin }}</span>
+          </div>
+          <p class="pin-info">
+            <i class="icon-info"></i>
+            Tu PIN de acceso es único y se genera automáticamente. Úsalo para
+            acceder a funciones especiales del sistema.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let isEditMode = false;
+  let isPinVisible = false;
+
+  function toggleEditMode() {
+    isEditMode = !isEditMode;
+
+    if (isEditMode) {
+      // Mostrar campos de edición
+      document.querySelectorAll('[id^="edit-"]').forEach((input) => {
+        input.style.display = "block";
+      });
+      document
+        .querySelectorAll(
+          '[id$="-nombre"], [id$="-apellido"], #documento, #correo, #celular'
+        )
+        .forEach((span) => {
+          span.style.display = "none";
+        });
+      document.getElementById("edit-actions").style.display = "block";
+      document.querySelector(".section-header button").innerHTML =
+        '<i class="icon-cancel"></i> Cancelar';
+      document.querySelector(".section-header button").onclick = cancelEdit;
+    } else {
+      cancelEdit();
+    }
+  }
+
+  function cancelEdit() {
+    isEditMode = false;
+
+    // Ocultar campos de edición
+    document.querySelectorAll('[id^="edit-"]').forEach((input) => {
+      input.style.display = "none";
+    });
+    document
+      .querySelectorAll(
+        '[id$="-nombre"], [id$="-apellido"], #documento, #correo, #celular'
+      )
+      .forEach((span) => {
+        span.style.display = "block";
+      });
+    document.getElementById("edit-actions").style.display = "none";
+    document.querySelector(".section-header button").innerHTML =
+      '<i class="icon-edit"></i> Editar';
+    document.querySelector(".section-header button").onclick = toggleEditMode;
+  }
+
+  function savePersonalData() {
+    // Recopilar datos del formulario
+    const formData = {
+      primer_nombre: document.getElementById("edit-primer-nombre").value,
+      segundo_nombre: document.getElementById("edit-segundo-nombre").value,
+      primer_apellido: document.getElementById("edit-primer-apellido").value,
+      segundo_apellido: document.getElementById("edit-segundo-apellido").value,
+      documento: document.getElementById("edit-documento").value,
+      correo: document.getElementById("edit-correo").value,
+      celular: document.getElementById("edit-celular").value,
+    };
+
+    // Enviar datos al servidor
+    fetch('{{ url_for("profile.update_personal_data") }}', {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Requested-With": "XMLHttpRequest",
+      },
+      body: JSON.stringify(formData),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          // Actualizar los valores mostrados
+          document.getElementById("primer-nombre").textContent =
+            formData.primer_nombre;
+          document.getElementById("segundo-nombre").textContent =
+            formData.segundo_nombre || "No especificado";
+          document.getElementById("primer-apellido").textContent =
+            formData.primer_apellido;
+          document.getElementById("segundo-apellido").textContent =
+            formData.segundo_apellido || "No especificado";
+          document.getElementById("documento").textContent = formData.documento;
+          document.getElementById("correo").textContent = formData.correo;
+          document.getElementById("celular").textContent =
+            formData.celular || "No especificado";
+
+          alert("Datos actualizados correctamente");
+          cancelEdit();
+        } else {
+          alert("Error: " + data.message);
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("Error al actualizar los datos");
+      });
+  }
+
+  function togglePinVisibility() {
+    isPinVisible = !isPinVisible;
+
+    if (isPinVisible) {
+      document.getElementById("pin-value").style.display = "none";
+      document.getElementById("pin-actual").style.display = "inline";
+      document.getElementById("pin-toggle-text").textContent = "Ocultar PIN";
+      document.getElementById("pin-eye-icon").className = "icon-eye-off";
+    } else {
+      document.getElementById("pin-value").style.display = "inline";
+      document.getElementById("pin-actual").style.display = "none";
+      document.getElementById("pin-toggle-text").textContent = "Mostrar PIN";
+      document.getElementById("pin-eye-icon").className = "icon-eye";
+    }
+  }
+
+  // Manejo del formulario de cambio de contraseña
+  document
+    .getElementById("password-form")
+    .addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const currentPassword = document.getElementById("current-password").value;
+      const newPassword = document.getElementById("new-password").value;
+      const confirmPassword = document.getElementById("confirm-password").value;
+
+      if (newPassword !== confirmPassword) {
+        alert("Las contraseñas nuevas no coinciden");
+        return;
+      }
+
+      if (newPassword.length < 6) {
+        alert("La nueva contraseña debe tener al menos 6 caracteres");
+        return;
+      }
+
+      // Enviar datos al servidor
+      const formData = {
+        current_password: currentPassword,
+        new_password: newPassword,
+        confirm_password: confirmPassword,
+      };
+
+      fetch('{{ url_for("profile.change_password") }}', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Requested-With": "XMLHttpRequest",
+        },
+        body: JSON.stringify(formData),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            alert("Contraseña actualizada correctamente");
+            this.reset();
+          } else {
+            alert("Error: " + data.message);
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          alert("Error al cambiar la contraseña");
+        });
+    });
+</script>
+{% endblock %}

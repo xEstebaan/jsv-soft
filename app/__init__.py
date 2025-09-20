@@ -22,8 +22,10 @@ def create_app():
 
     # Registrar blueprints aquí (import diferido)
     from .routers.auth import auth_bp
+    from .routers.profile import profile_bp
 
     app.register_blueprint(auth_bp)
+    app.register_blueprint(profile_bp)
 
     @app.route("/")
     def index():
