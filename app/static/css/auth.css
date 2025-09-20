@@ -1,147 +1,182 @@
-:root {
-  --bg: #f3f4f6;
-  --card: #ffffff;
-  --text: #0f172a;
-  --muted: #6b7280;
-  --primary: #1e1b4b;
-  --primary-contrast: #ffffff;
-}
+/* ========================================
+   AUTH STYLES - JSV SOFT
+   ======================================== */
+
+/* Importar variables CSS */
+@import url("./variables.css");
+
+/* ========================================
+   RESET Y BASE
+   ======================================== */
 
 * {
   box-sizing: border-box;
 }
+
 html,
 body {
   height: 100%;
 }
+
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell,
-    Noto Sans, Helvetica Neue, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  font-family: var(--font-family);
   background: var(--bg);
   color: var(--text);
 }
+
+/* ========================================
+   LAYOUT PRINCIPAL
+   ======================================== */
 
 .auth-container {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: var(--space-6);
 }
 
 .auth-card {
   width: 100%;
   max-width: 440px;
   background: var(--card);
-  border-radius: 12px;
-  padding: 32px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  border-radius: var(--radius-xl);
+  padding: var(--space-8);
+  box-shadow: var(--shadow-card);
 }
+
+/* ========================================
+   HEADER Y LOGO
+   ======================================== */
 
 .auth-header {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: var(--space-5);
 }
+
 .auth-header img {
-  height: 128px; /* alto base visible */
-  width: auto; /* mantiene proporción del logo */
-  max-width: 240px; /* evita que se desborde en pantallas pequeñas */
+  height: var(--height-logo);
+  width: auto;
+  max-width: var(--width-logo-max);
   display: block;
-  margin: 0 auto 16px auto;
+  margin: 0 auto var(--space-4) auto;
 }
-/* .auth-title eliminado: ya no se usa un título principal en el card */
+
 .auth-subtitle {
   margin: 0;
-  font-size: 16px;
-  font-weight: 600;
+  font-size: var(--font-md);
+  font-weight: var(--font-semibold);
   color: var(--text);
 }
 
+/* ========================================
+   FORMULARIOS
+   ======================================== */
+
 .form-group {
-  margin-bottom: 14px;
+  margin-bottom: var(--margin-md);
 }
+
 label {
   display: block;
-  margin-bottom: 6px;
-  font-weight: 600;
-  font-size: 14px;
+  margin-bottom: var(--margin-xs);
+  font-weight: var(--font-semibold);
+  font-size: var(--font-base);
 }
+
 input[type="text"],
 input[type="email"],
 input[type="password"] {
   width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  background: #f9fafb;
+  padding: var(--padding-sm);
+  border: var(--border-thin) solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--input-bg);
 }
 
+/* ========================================
+   BOTONES Y ACCIONES
+   ======================================== */
+
 .auth-actions {
-  margin-top: 16px;
+  margin-top: var(--space-4);
 }
+
 .btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 100%;
-  min-height: 44px;
-  padding: 12px 16px;
+  min-height: var(--height-button);
+  padding: var(--padding-md);
   background: var(--primary);
   color: var(--primary-contrast);
   border: none;
-  border-radius: 10px;
-  font-weight: 700;
-  font-size: 14px;
-  letter-spacing: 0.2px;
+  border-radius: var(--radius-lg);
+  font-weight: var(--font-bold);
+  font-size: var(--font-base);
+  letter-spacing: var(--letter-spacing-tight);
   text-decoration: none;
   cursor: pointer;
-  transition: background 0.15s ease, transform 0.02s ease;
+  transition: background var(--transition-fast), transform 0.02s ease;
 }
+
 .btn-primary:hover {
-  background: #16134a;
+  background: var(--primary-hover);
 }
+
 .btn-primary:active {
   transform: translateY(1px);
 }
+
 .btn-primary:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+/* ========================================
+   ELEMENTOS DE AYUDA
+   ======================================== */
+
 .helper {
   text-align: center;
-  margin-top: 12px;
-  font-size: 14px;
+  margin-top: var(--margin-md);
+  font-size: var(--font-base);
 }
+
 .helper a {
   color: var(--primary);
   text-decoration: none;
 }
 
-/* Estilos para la modal del PIN */
+/* ========================================
+   MODAL DEL PIN
+   ======================================== */
+
 .modal {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
+  background-color: var(--modal-overlay);
+  z-index: var(--z-modal);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 16px;
+  padding: var(--space-4);
 }
 
 .modal-content {
   background: var(--card);
-  border-radius: 16px;
-  max-width: 500px;
+  border-radius: var(--radius-2xl);
+  max-width: var(--width-modal-max);
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-  animation: modalSlideIn 0.3s ease-out;
+  box-shadow: var(--shadow-modal);
+  animation: modalSlideIn var(--transition-slow) ease-out;
   margin: 0 auto;
 }
 
@@ -156,54 +191,66 @@ input[type="password"] {
   }
 }
 
+/* ========================================
+   MODAL HEADER
+   ======================================== */
+
 .modal-header {
-  padding: 24px 24px 16px 24px;
+  padding: var(--space-6) var(--space-6) var(--space-4) var(--space-6);
   text-align: center;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: var(--border-thin) solid var(--border);
 }
 
 .modal-header h2 {
   margin: 0;
-  font-size: 24px;
-  font-weight: 700;
+  font-size: var(--font-2xl);
+  font-weight: var(--font-bold);
   color: var(--text);
 }
 
+/* ========================================
+   MODAL BODY
+   ======================================== */
+
 .modal-body {
-  padding: 24px;
+  padding: var(--space-6);
   text-align: center;
 }
 
 .modal-message {
-  font-size: 16px;
-  color: var(--muted);
-  margin-bottom: 24px;
-  line-height: 1.5;
+  font-size: var(--font-md);
+  color: var(--text-muted);
+  margin-bottom: var(--space-6);
+  line-height: var(--leading-normal);
 }
+
+/* ========================================
+   PIN DISPLAY
+   ======================================== */
 
 .pin-container {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  margin-bottom: 16px;
-  padding: 20px;
-  background: #f8fafc;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
+  gap: var(--margin-md);
+  margin-bottom: var(--space-4);
+  padding: var(--space-5);
+  background: var(--pin-bg);
+  border: var(--border-medium) solid var(--border-light);
+  border-radius: var(--radius-xl);
 }
 
 .pin-display {
-  font-size: 32px;
-  font-weight: 800;
-  font-family: "Courier New", monospace;
+  font-size: var(--font-3xl);
+  font-weight: var(--font-extrabold);
+  font-family: var(--font-mono);
   color: var(--primary);
-  letter-spacing: 2px;
+  letter-spacing: var(--letter-spacing-wide);
   background: white;
-  padding: 12px 20px;
-  border-radius: 8px;
-  border: 2px solid var(--primary);
-  min-width: 200px;
+  padding: var(--padding-md) var(--space-5);
+  border-radius: var(--radius-md);
+  border: var(--border-medium) solid var(--primary);
+  min-width: var(--width-pin-min);
   text-align: center;
 }
 
@@ -211,17 +258,17 @@ input[type="password"] {
   background: var(--primary);
   color: white;
   border: none;
-  border-radius: 8px;
-  padding: 12px;
+  border-radius: var(--radius-md);
+  padding: var(--padding-md);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-normal);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .copy-btn:hover {
-  background: #16134a;
+  background: var(--primary-hover);
   transform: translateY(-1px);
 }
 
@@ -230,130 +277,139 @@ input[type="password"] {
 }
 
 .copy-status {
-  font-size: 14px;
-  font-weight: 600;
-  margin-top: 8px;
-  min-height: 20px;
+  font-size: var(--font-base);
+  font-weight: var(--font-semibold);
+  margin-top: var(--space-2);
+  min-height: var(--space-5);
 }
 
+/* ========================================
+   MODAL FOOTER
+   ======================================== */
+
 .modal-footer {
-  padding: 16px 24px 24px 24px;
+  padding: var(--space-4) var(--space-6) var(--space-6) var(--space-6);
   text-align: center;
-  border-top: 1px solid #e5e7eb;
+  border-top: var(--border-thin) solid var(--border);
 }
 
 .modal-footer .btn-primary {
   min-width: 120px;
 }
 
-/* Responsive para móviles */
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+/* Tablets */
 @media (max-width: 768px) {
   .modal {
-    padding: 12px;
+    padding: var(--margin-md);
   }
 
   .modal-content {
     max-width: 100%;
     margin: 0;
-    border-radius: 12px;
+    border-radius: var(--radius-xl);
   }
 
   .modal-header {
-    padding: 20px 16px 12px 16px;
+    padding: var(--space-5) var(--space-4) var(--margin-md) var(--space-4);
   }
 
   .modal-header h2 {
-    font-size: 20px;
+    font-size: var(--font-xl);
   }
 
   .modal-body {
-    padding: 16px;
+    padding: var(--space-4);
   }
 
   .modal-message {
-    font-size: 14px;
-    margin-bottom: 20px;
+    font-size: var(--font-base);
+    margin-bottom: var(--space-5);
   }
 
   .pin-display {
-    font-size: 24px;
-    min-width: 140px;
-    padding: 10px 16px;
-    letter-spacing: 1px;
+    font-size: var(--font-2xl);
+    min-width: var(--width-pin-mobile);
+    padding: var(--padding-sm) var(--space-4);
+    letter-spacing: var(--letter-spacing-normal);
   }
 
   .pin-container {
     flex-direction: column;
-    gap: 16px;
-    padding: 16px;
+    gap: var(--space-4);
+    padding: var(--space-4);
   }
 
   .copy-btn {
     width: 100%;
     max-width: 200px;
-    padding: 10px;
+    padding: var(--padding-sm);
   }
 
   .modal-footer {
-    padding: 12px 16px 20px 16px;
+    padding: var(--margin-md) var(--space-4) var(--space-5) var(--space-4);
   }
 
   .modal-footer .btn-primary {
     min-width: 100px;
-    font-size: 13px;
+    font-size: var(--font-sm);
   }
 }
 
+/* Móviles */
 @media (max-width: 480px) {
   .modal {
-    padding: 8px;
+    padding: var(--space-2);
   }
 
   .modal-content {
-    border-radius: 8px;
+    border-radius: var(--radius-md);
   }
 
   .modal-header {
-    padding: 16px 12px 8px 12px;
+    padding: var(--space-4) var(--margin-md) var(--space-2) var(--margin-md);
   }
 
   .modal-header h2 {
-    font-size: 18px;
+    font-size: var(--font-lg);
   }
 
   .modal-body {
-    padding: 12px;
+    padding: var(--margin-md);
   }
 
   .modal-message {
-    font-size: 13px;
-    margin-bottom: 16px;
+    font-size: var(--font-sm);
+    margin-bottom: var(--space-4);
   }
 
   .pin-display {
-    font-size: 20px;
-    min-width: 120px;
-    padding: 8px 12px;
+    font-size: var(--font-xl);
+    min-width: var(--width-pin-small);
+    padding: var(--space-2) var(--margin-md);
     letter-spacing: 0.5px;
   }
 
   .pin-container {
-    padding: 12px;
-    gap: 12px;
+    padding: var(--margin-md);
+    gap: var(--margin-md);
   }
 
   .copy-btn {
-    padding: 8px;
-    font-size: 12px;
+    padding: var(--space-2);
+    font-size: var(--font-xs);
   }
 
   .modal-footer {
-    padding: 8px 12px 16px 12px;
+    padding: var(--space-2) var(--margin-md) var(--space-4) var(--margin-md);
   }
 
   .modal-footer .btn-primary {
     min-width: 80px;
-    font-size: 12px;
-    padding: 10px 12px;
+    font-size: var(--font-xs);
+    padding: var(--padding-sm);
   }
 }
