@@ -117,3 +117,154 @@ input[type="password"] {
   color: var(--primary);
   text-decoration: none;
 }
+
+/* Estilos para la modal del PIN */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal-content {
+  background: var(--card);
+  border-radius: 16px;
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-header {
+  padding: 24px 24px 16px 24px;
+  text-align: center;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.modal-body {
+  padding: 24px;
+  text-align: center;
+}
+
+.modal-message {
+  font-size: 16px;
+  color: var(--muted);
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.pin-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 20px;
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+}
+
+.pin-display {
+  font-size: 32px;
+  font-weight: 800;
+  font-family: "Courier New", monospace;
+  color: var(--primary);
+  letter-spacing: 2px;
+  background: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: 2px solid var(--primary);
+  min-width: 200px;
+  text-align: center;
+}
+
+.copy-btn {
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.copy-btn:hover {
+  background: #16134a;
+  transform: translateY(-1px);
+}
+
+.copy-btn:active {
+  transform: translateY(0);
+}
+
+.copy-status {
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 8px;
+  min-height: 20px;
+}
+
+.modal-footer {
+  padding: 16px 24px 24px 24px;
+  text-align: center;
+  border-top: 1px solid #e5e7eb;
+}
+
+.modal-footer .btn-primary {
+  min-width: 120px;
+}
+
+/* Responsive para móviles */
+@media (max-width: 480px) {
+  .modal-content {
+    margin: 10px;
+    max-width: calc(100% - 20px);
+  }
+
+  .pin-display {
+    font-size: 24px;
+    min-width: 150px;
+    padding: 10px 16px;
+  }
+
+  .pin-container {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .copy-btn {
+    width: 100%;
+    max-width: 200px;
+  }
+}
