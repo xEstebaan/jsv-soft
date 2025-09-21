@@ -1,0 +1,211 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body.bg {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-family);
+  line-height: var(--leading-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-10);
+}
+
+.card {
+  width: min(470px, 100%);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-8);
+  overflow: hidden;
+}
+
+.title {
+  margin: 0 0 var(--space-10);
+  font-size: clamp(24px, 2.8vw, 32px);
+  font-weight: var(--font-bold);
+  text-align: center;
+  color: var(--text);
+  font-family: var(--font-family);
+  letter-spacing: 0.5px;
+}
+
+.date {
+  margin: 0 0 var(--space-6);
+  text-align: center;
+  font-size: var(--font-xl);
+  color: var(--text-muted);
+  letter-spacing: var(--letter-spacing-normal);
+}
+
+.clock-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--space-10);
+}
+
+.clock {
+  display: inline-block;
+  background: var(--bg);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-6);
+  font-weight: var(--font-medium);
+  font-size: clamp(32px, 5vw, 48px);
+  color: var(--text);
+  font-family: var(--font-mono);
+  border: 1px solid var(--border-light);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
+}
+
+.helper {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: var(--font-md);
+  margin: 0 0 var(--space-3);
+  font-weight: var(--font-normal);
+  font-style: normal;
+}
+
+.field {
+  margin-bottom: var(--space-6);
+  min-width: 0;
+}
+
+.label {
+  display: inline-block;
+  margin-bottom: var(--space-2);
+  font-size: var(--font-sm);
+  color: var(--text-light);
+  font-weight: var(--font-normal);
+}
+
+.input-with-icon {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.input {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: var(--height-input);
+  border-radius: var(--radius-md);
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  padding: 0 var(--space-4);
+  font-size: var(--font-md);
+  color: var(--text);
+  transition: border-color var(--transition-normal), box-shadow var(--transition-normal);
+  text-align: center;
+}
+
+.input::placeholder {
+  color: var(--text-light);
+  opacity: 0.7;
+  font-size: var(--font-sm);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--border-focus) 20%, transparent);
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+.btn {
+  height: var(--height-button);
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  font-weight: var(--font-normal);
+  font-size: var(--font-base);
+  cursor: pointer;
+  transition: background var(--transition-normal), border-color var(--transition-normal), transform var(--transition-fast);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn-primary {
+  background: #2e3356;
+  color: var(--primary-contrast);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover {
+  background: #1a1e42;
+}
+
+.btn-secondary {
+  background: var(--card);
+  color: #2e3356;
+  border-color: #2e3356;
+}
+
+.btn-secondary:hover {
+  background: var(--card-hover);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 0 var(--space-6);
+}
+
+.brand__logo {
+  display: block;
+  height: clamp(40px, 10vw, var(--height-logo));
+  max-width: var(--width-logo-max);
+  width: auto;
+  object-fit: contain;
+}
+
+.alert {
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--font-sm);
+}
+
+.alert-success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.alert-error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.alert-warning {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+
+@media (max-width: 420px) {
+  .actions {
+    grid-template-columns: 1fr;
+  }
+}

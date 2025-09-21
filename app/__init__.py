@@ -1,4 +1,5 @@
-from flask import Flask, send_from_directory
+from flask import Flask, render_template, send_from_directory
+import os
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate
@@ -10,26 +11,28 @@ migrate = Migrate()
 
 
 def create_app():
-    app = Flask(__name__)  # usa app/templates y app/static por defecto
+    app = Flask(__name__)
     app.config.from_object(Config)
 
     db.init_app(app)
     login_manager.init_app(app)
-    # Establecer la vista de login por defecto
+
     login_manager.login_view = "auth.login"
     login_manager.login_message_category = "warning"
     migrate.init_app(app, db)
 
-    # Registrar blueprints aquí (import diferido)
     from .routers.auth import auth_bp
     from .routers.profile import profile_bp
+    from .routers.registro import registro_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(profile_bp)
+    app.register_blueprint(registro_bp)
 
     @app.route("/")
     def index():
-        return "OK"
+        return render_template("registro/registro.html")
+
 
     @app.route("/favicon.ico")
     def favicon():
@@ -41,10 +44,8 @@ def create_app():
 
     return app
 
-
 @login_manager.user_loader
 def load_user(user_id):
-    # Cargar usuario por id para Flask-Login
-    from .models import Usuario  # import diferido para evitar import circular
+    from .models import Usuario
 
     return Usuario.query.get(int(user_id))

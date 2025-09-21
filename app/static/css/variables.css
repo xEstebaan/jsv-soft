@@ -5,20 +5,20 @@
 /* Colores principales */
 :root {
   /* Colores de fondo */
-  --bg: #f3f4f6;
+  --bg: #f8f9fa;
   --card: #ffffff;
   --card-hover: #f8fafc;
 
   /* Colores de texto */
-  --text: #0f172a;
-  --text-muted: #6b7280;
-  --text-light: #9ca3af;
+  --text: #212529;
+  --text-muted: #6c757d;
+  --text-light: #adb5bd;
 
   /* Colores primarios */
-  --primary: #1e1b4b;
-  --primary-hover: #16134a;
+  --primary: #2e3356;
+  --primary-hover: #1a1e42;
   --primary-contrast: #ffffff;
-  --primary-light: #3b3a6b;
+  --primary-light: #414675;
 
   /* Colores de borde */
   --border: #e5e7eb;
