@@ -147,3 +147,4 @@ def change_password():
             ),
             500,
         )
+
