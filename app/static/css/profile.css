@@ -404,3 +404,171 @@
   border-color: #3182ce;
   box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
 }
+
+/* ========================================
+   HISTORY TAB STYLES
+   ======================================== */
+
+.history-container {
+  padding: 1.5rem;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.history-header h3 {
+  margin: 0;
+  color: #2d3748;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.week-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.week-filter label {
+  font-weight: 500;
+  color: #4a5568;
+  font-size: 0.9rem;
+}
+
+.week-input {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background: white;
+  color: #2d3748;
+  transition: all 0.2s ease;
+}
+
+.week-input:focus {
+  outline: none;
+  border-color: #3182ce;
+  box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+}
+
+.history-table-container {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.history-table thead {
+  background: #f7fafc;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.history-table th {
+  padding: 1rem 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  color: #2d3748;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+}
+
+.history-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #e2e8f0;
+  color: #4a5568;
+  vertical-align: middle;
+}
+
+.history-table tbody tr:hover {
+  background: #f8f9fa;
+}
+
+.history-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Special states for table cells */
+.no-data,
+.loading,
+.error {
+  text-align: center;
+  font-style: italic;
+  color: #718096;
+  padding: 2rem;
+}
+
+.loading {
+  color: #3182ce;
+}
+
+.error {
+  color: #e53e3e;
+}
+
+/* Responsive design for history table */
+@media (max-width: 768px) {
+  .history-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .week-filter {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .history-table {
+    font-size: 0.8rem;
+  }
+
+  .history-table th,
+  .history-table td {
+    padding: 0.5rem 0.25rem;
+  }
+
+  .history-table th:first-child,
+  .history-table td:first-child {
+    padding-left: 0.5rem;
+  }
+
+  .history-table th:last-child,
+  .history-table td:last-child {
+    padding-right: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .history-container {
+    padding: 1rem;
+  }
+
+  .history-header h3 {
+    font-size: 1.25rem;
+  }
+
+  .history-table {
+    font-size: 0.75rem;
+  }
+
+  .history-table th {
+    font-size: 0.7rem;
+    padding: 0.75rem 0.25rem;
+  }
+
+  .history-table td {
+    padding: 0.5rem 0.25rem;
+  }
+}

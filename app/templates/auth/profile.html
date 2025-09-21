@@ -25,6 +25,7 @@ stylesheets %}
         Gestionar contraseña
       </button>
       <button class="tab-button" data-tab="access-pin">PIN de acceso</button>
+      <button class="tab-button" data-tab="history">Historial</button>
     </div>
 
     <!-- Tab Content -->
@@ -129,6 +130,39 @@ stylesheets %}
           </p>
         </div>
       </div>
+
+      <!-- History Tab -->
+      <div id="history" class="tab-panel">
+        <div class="history-container">
+          <div class="history-header">
+            <h3>Historial de Registros</h3>
+            <div class="week-filter">
+              <label for="week-selector">Selecciona la semana:</label>
+              <input type="week" id="week-selector" class="week-input" />
+            </div>
+          </div>
+
+          <div class="history-table-container">
+            <table class="history-table">
+              <thead>
+                <tr>
+                  <th>NOMBRE DE USUARIO</th>
+                  <th>FECHA</th>
+                  <th>HORA DE ENTRADA</th>
+                  <th>HORA DE SALIDA</th>
+                </tr>
+              </thead>
+              <tbody id="history-tbody">
+                <tr>
+                  <td colspan="4" class="no-data">
+                    Selecciona una semana para ver el historial
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -221,6 +255,138 @@ stylesheets %}
             alert("Error al cambiar la contraseña");
           });
       });
+
+    // History functionality
+    const weekSelector = document.getElementById("week-selector");
+    const historyTbody = document.getElementById("history-tbody");
+
+    // Set default week to current week
+    const today = new Date();
+    const currentWeek = getWeekString(today);
+    weekSelector.value = currentWeek;
+
+    weekSelector.addEventListener("change", function () {
+      const selectedWeek = this.value;
+      if (selectedWeek) {
+        loadHistoryData(selectedWeek);
+      }
+    });
+
+    function getWeekString(date) {
+      const year = date.getFullYear();
+      const week = getWeekNumber(date);
+      return `${year}-W${week.toString().padStart(2, "0")}`;
+    }
+
+    function getWeekNumber(date) {
+      const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
+      const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
+      return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+    }
+
+    function loadHistoryData(weekString) {
+      // Show loading state
+      historyTbody.innerHTML =
+        '<tr><td colspan="4" class="loading">Cargando datos...</td></tr>';
+
+      console.log("Cargando historial para semana:", weekString);
+
+      fetch(`{{ url_for('profile.get_history') }}?week=${weekString}`)
+        .then((response) => {
+          console.log("Respuesta del servidor:", response.status);
+          return response.json();
+        })
+        .then((data) => {
+          console.log("Datos recibidos:", data);
+          if (data.success) {
+            console.log("Número de registros:", data.registros.length);
+            displayHistoryData(data.registros);
+          } else {
+            console.error("Error del servidor:", data.message);
+            historyTbody.innerHTML =
+              '<tr><td colspan="4" class="error">Error al cargar los datos: ' +
+              data.message +
+              "</td></tr>";
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          historyTbody.innerHTML =
+            '<tr><td colspan="4" class="error">Error al cargar los datos</td></tr>';
+        });
+    }
+
+    function displayHistoryData(registros) {
+      console.log("Mostrando registros:", registros);
+
+      if (registros.length === 0) {
+        console.log("No hay registros para mostrar");
+        historyTbody.innerHTML =
+          '<tr><td colspan="4" class="no-data">No hay registros para esta semana</td></tr>';
+        return;
+      }
+
+      // Group registros by date and create pairs of entrada/salida
+      const groupedRegistros = {};
+      registros.forEach((registro) => {
+        console.log("Procesando registro:", registro);
+        const fecha = registro.fecha_hora.split("T")[0];
+        if (!groupedRegistros[fecha]) {
+          groupedRegistros[fecha] = [];
+        }
+
+        // Add the registro to the date array
+        groupedRegistros[fecha].push(registro);
+      });
+
+      // Sort registros by time within each date
+      Object.keys(groupedRegistros).forEach((fecha) => {
+        groupedRegistros[fecha].sort(
+          (a, b) => new Date(a.fecha_hora) - new Date(b.fecha_hora)
+        );
+      });
+
+      console.log("Registros agrupados:", groupedRegistros);
+
+      // Create table rows - show each entrada/salida pair as a separate row
+      let html = "";
+      Object.keys(groupedRegistros)
+        .sort()
+        .forEach((fecha) => {
+          const registrosDelDia = groupedRegistros[fecha];
+          const fechaFormatted = new Date(fecha).toLocaleDateString("es-ES");
+
+          // Process registros in pairs
+          for (let i = 0; i < registrosDelDia.length; i += 2) {
+            const entrada = registrosDelDia[i];
+            const salida = registrosDelDia[i + 1];
+
+            const horaEntrada = entrada
+              ? new Date(entrada.fecha_hora).toLocaleTimeString("es-ES", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })
+              : "-";
+            const horaSalida = salida
+              ? new Date(salida.fecha_hora).toLocaleTimeString("es-ES", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })
+              : "-";
+
+            html += `
+            <tr>
+              <td>{{ persona.primer_nombre }} {{ persona.primer_apellido }}</td>
+              <td>${fechaFormatted}</td>
+              <td>${horaEntrada}</td>
+              <td>${horaSalida}</td>
+            </tr>
+          `;
+          }
+        });
+
+      historyTbody.innerHTML = html;
+    }
   </script>
   {% endblock %}
 </div>
