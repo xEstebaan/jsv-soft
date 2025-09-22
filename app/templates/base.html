@@ -10,17 +10,25 @@
       href="{{ url_for('static', filename='img/favicon.png') }}"
     />
     <link
-      rel="icon" 
+      rel="icon"
       type="image/x-icon"
       href="{{ url_for('static', filename='img/favicon.ico') }}"
     />
     <title>{% block title %}{% endblock %}</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/variables.css') }}"
+    />
+    {% block stylesheets %}{% endblock %}
   </head>
   <body>
     <nav>
       <a href="{{ url_for('index') }}">Inicio</a>
       {% if current_user.is_authenticated %}
       <span> | Sesión: {{ current_user.get_id() }}</span>
+      {% if current_user.id_rol != 1 %}
+      <a href="{{ url_for('profile.profile') }}">Mi Perfil</a>
+      {% endif %}
       <a href="{{ url_for('auth.logout') }}">Salir</a>
       {% else %}
       <a href="{{ url_for('auth.login') }}">Entrar</a>

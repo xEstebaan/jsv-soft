@@ -26,7 +26,7 @@ def login():
         if usuario and check_password_hash(usuario.contrasena, form.contrasena.data):
             login_user(usuario, remember=form.recordar.data)
             next_page = request.args.get("next")
-            return redirect(next_page or url_for("index"))
+            return redirect(next_page or url_for("profile.profile"))
         flash("Credenciales inválidas", "danger")
     return render_template("auth/form.html", form=form, form_type="login")
 
@@ -34,7 +34,7 @@ def login():
 @auth_bp.route("/register", methods=["GET", "POST"])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for("index"))
+        return redirect(url_for("profile.profile"))
 
     form = RegistrationForm()
 

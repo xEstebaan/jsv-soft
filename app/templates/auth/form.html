@@ -1,9 +1,12 @@
-{% extends "base.html" %} {% block title %}{% if form_type == 'login' %}Iniciar
-sesión{% else %}Crear cuenta{% endif %}{% endblock %} {% block content %}
-<link
-  rel="stylesheet"
-  href="{{ url_for('static', filename='css/auth.css') }}"
-/>
+{% extends "base.html" %} 
+
+{% block title %}{% if form_type == 'login' %}Iniciar sesión{% else %}Crear cuenta{% endif %}{% endblock %} 
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}" />
+{% endblock %}
+
+{% block content %}
 
 <div class="auth-container">
   <div class="auth-card">
@@ -126,90 +129,92 @@ sesión{% else %}Crear cuenta{% endif %}{% endblock %} {% block content %}
     const copyStatus = document.getElementById("copyStatus");
     const closeBtn = document.getElementById("closeModalBtn");
 
-    // Manejar envío del formulario
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
+    // Solo manejar envío del formulario de registro con AJAX
+    if ("{{ form_type }}" === "register") {
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
 
-      const formData = new FormData(form);
+        const formData = new FormData(form);
 
-      // Mostrar indicador de carga
-      const submitBtn = form.querySelector('button[type="submit"]');
-      const originalText = submitBtn.textContent;
-      submitBtn.textContent = "Creando cuenta...";
-      submitBtn.disabled = true;
+        // Mostrar indicador de carga
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = "Creando cuenta...";
+        submitBtn.disabled = true;
 
-      fetch('{{ url_for("auth.register") }}', {
-        method: "POST",
-        body: formData,
-        headers: {
-          "X-Requested-With": "XMLHttpRequest",
-        },
-      })
-        .then((response) => {
-          console.log("Response status:", response.status);
-          console.log("Response headers:", response.headers);
-          return response.json();
+        fetch('{{ url_for("auth.register") }}', {
+          method: "POST",
+          body: formData,
+          headers: {
+            "X-Requested-With": "XMLHttpRequest",
+          },
         })
-        .then((data) => {
-          console.log("Response data:", data);
-          if (data.success) {
-            pinDisplay.textContent = data.pin;
-            modal.style.display = "block";
-          } else {
-            // Mostrar errores de validación si existen
-            if (data.errors) {
-              let errorMessage = data.message + "\n\n";
-              for (const [field, error] of Object.entries(data.errors)) {
-                errorMessage += `• ${field}: ${error}\n`;
-              }
-              alert(errorMessage);
+          .then((response) => {
+            console.log("Response status:", response.status);
+            console.log("Response headers:", response.headers);
+            return response.json();
+          })
+          .then((data) => {
+            console.log("Response data:", data);
+            if (data.success) {
+              pinDisplay.textContent = data.pin;
+              modal.style.display = "block";
             } else {
-              alert(data.message || "Error desconocido");
+              // Mostrar errores de validación si existen
+              if (data.errors) {
+                let errorMessage = data.message + "\n\n";
+                for (const [field, error] of Object.entries(data.errors)) {
+                  errorMessage += `• ${field}: ${error}\n`;
+                }
+                alert(errorMessage);
+              } else {
+                alert(data.message || "Error desconocido");
+              }
             }
-          }
-        })
-        .catch((error) => {
-          console.error("Error completo:", error);
-          alert("Error al procesar el registro: " + error.message);
-        })
-        .finally(() => {
-          // Restaurar botón
-          submitBtn.textContent = originalText;
-          submitBtn.disabled = false;
-        });
-    });
+          })
+          .catch((error) => {
+            console.error("Error completo:", error);
+            alert("Error al procesar el registro: " + error.message);
+          })
+          .finally(() => {
+            // Restaurar botón
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+          });
+      });
 
-    // Copiar PIN al portapapeles
-    copyBtn.addEventListener("click", function () {
-      const pin = pinDisplay.textContent;
-      navigator.clipboard
-        .writeText(pin)
-        .then(function () {
-          copyStatus.textContent = "PIN copiado al portapapeles";
-          copyStatus.style.color = "#28a745";
-          setTimeout(() => {
-            copyStatus.textContent = "";
-          }, 2000);
-        })
-        .catch(function () {
-          copyStatus.textContent = "Error al copiar";
-          copyStatus.style.color = "#dc3545";
-        });
-    });
+      // Copiar PIN al portapapeles
+      copyBtn.addEventListener("click", function () {
+        const pin = pinDisplay.textContent;
+        navigator.clipboard
+          .writeText(pin)
+          .then(function () {
+            copyStatus.textContent = "PIN copiado al portapapeles";
+            copyStatus.style.color = "#28a745";
+            setTimeout(() => {
+              copyStatus.textContent = "";
+            }, 2000);
+          })
+          .catch(function () {
+            copyStatus.textContent = "Error al copiar";
+            copyStatus.style.color = "#dc3545";
+          });
+      });
 
-    // Cerrar modal
-    closeBtn.addEventListener("click", function () {
-      modal.style.display = "none";
-      window.location.href = '{{ url_for("auth.login") }}';
-    });
-
-    // Cerrar modal al hacer clic fuera de él
-    modal.addEventListener("click", function (e) {
-      if (e.target === modal) {
+      // Cerrar modal
+      closeBtn.addEventListener("click", function () {
         modal.style.display = "none";
         window.location.href = '{{ url_for("auth.login") }}';
-      }
-    });
+      });
+
+      // Cerrar modal al hacer clic fuera de él
+      modal.addEventListener("click", function (e) {
+        if (e.target === modal) {
+          modal.style.display = "none";
+          window.location.href = '{{ url_for("auth.login") }}';
+        }
+      });
+    }
   });
 </script>
 {% endblock %}
