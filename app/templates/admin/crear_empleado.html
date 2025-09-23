@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Crear Empleado</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/empleados.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}" />
+    <script src="{{ url_for('static', filename='js/empleados.js') }}"></script>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <span class="material-symbols-outlined">shield_person</span>
+                </div>
+                <h1>Panel Administrador</h1>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="{{ url_for('admin.lista_empleados') }}" class="nav-link">
+                    <span class="material-symbols-outlined">group</span>
+                    Empleados
+                </a>
+                <a href="#" class="nav-link">
+                    <span class="material-symbols-outlined">bar_chart</span>
+                    Reportes
+                </a>
+            </nav>
+            <div class="user-profile">
+                <img src="{{ url_for('static', filename='img/usuario.png') }}" alt="User avatar" class="avatar">
+                <div class="user-info">
+                    <p class="user-name">{{ current_user.persona.primer_nombre if current_user.persona else 'Usuario Admin' }}</p>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="header">
+                <h2>Crear Nuevo Empleado</h2>
+                <a href="{{ url_for('admin.lista_empleados') }}" class="btn-secondary btn-back">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                    <span>Volver a la lista</span>
+                </a>
+            </div>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+            
+            <div class="form-container">
+                <form method="post" action="{{ url_for('admin.crear_empleado') }}">
+                    <h3>Información Personal</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="primer_nombre" class="required">Primer Nombre</label>
+                            <input type="text" id="primer_nombre" name="primer_nombre" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="segundo_nombre">Segundo Nombre</label>
+                            <input type="text" id="segundo_nombre" name="segundo_nombre" class="form-control">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="primer_apellido" class="required">Primer Apellido</label>
+                            <input type="text" id="primer_apellido" name="primer_apellido" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="segundo_apellido">Segundo Apellido</label>
+                            <input type="text" id="segundo_apellido" name="segundo_apellido" class="form-control">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="documento" class="required">Número de Documento</label>
+                            <input type="text" id="documento" name="documento" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="correo" class="required">Correo Electrónico</label>
+                            <input type="email" id="correo" name="correo" class="form-control" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" title="Por favor, ingresa un correo electrónico válido (ejemplo: nombre@dominio.com)" required>
+                            <small class="form-text text-muted">Formato: ejemplo@dominio.com</small>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="celular">Número de Celular</label>
+                        <input type="text" id="celular" name="celular" class="form-control">
+                    </div>
+                    
+                    <h3>Información de Acceso</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contrasena" class="required">Contraseña</label>
+                            <input type="password" id="contrasena" name="contrasena" class="form-control" required>
+                            <small class="form-text text-muted">La contraseña debe tener al menos 6 caracteres.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmar_contrasena" class="required">Confirmar Contraseña</label>
+                            <input type="password" id="confirmar_contrasena" name="confirmar_contrasena" class="form-control" required>
+                        </div>
+                    </div>
+                    
+                    <h3>Información Laboral</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cargo_id" class="required">Cargo</label>
+                            <select id="cargo_id" name="cargo_id" class="form-control" required>
+                                <option value="">Seleccione un cargo</option>
+                                {% for cargo in cargos %}
+                                <option value="{{ cargo.id_cargo }}">{{ cargo.descripcion }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="fecha_contratacion" class="required">Fecha de Contratación</label>
+                            <input type="date" id="fecha_contratacion" name="fecha_contratacion" class="form-control" required>
+                        </div>
+                    </div>
+                    
+                    <div class="btn-container">
+                        <a href="{{ url_for('admin.lista_empleados') }}" class="btn-secondary">Cancelar</a>
+                        <button type="submit" class="btn-primary">Guardar Empleado</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    
+    <div class="modal" id="pinModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>PIN Generado</h3>
+            </div>
+            <div class="modal-body">
+                <p>Se ha creado exitosamente el empleado. El PIN generado para este empleado es:</p>
+                <div class="pin-display" id="pinDisplay"></div>
+                <p>Por favor, guarde este PIN en un lugar seguro y compártalo con el empleado para que pueda registrar su asistencia.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" onclick="cerrarModal()">Aceptar</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Script para mostrar mensajes de error/éxito y mostrar el PIN
+        document.addEventListener('DOMContentLoaded', function() {
+            // Buscar si hay un mensaje de éxito con PIN
+            const flashMessages = document.querySelectorAll('.alert-success');
+            
+            flashMessages.forEach(message => {
+                const text = message.textContent;
+                // Buscar un patrón de PIN en el mensaje (3 letras seguidas de 4 números)
+                const pinMatch = text.match(/PIN generado: ([A-Z]{3}\d{4})/);
+                if (pinMatch) {
+                    const pin = pinMatch[1];
+                    // Mostrar el PIN en el modal
+                    document.getElementById('pinDisplay').textContent = pin;
+                    // Abrir el modal
+                    document.getElementById('pinModal').classList.add('show');
+                    // Ocultar el mensaje flash original
+                    message.style.display = 'none';
+                }
+            });
+            
+            const form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    // Validación de correo electrónico
+                    const emailInput = document.getElementById('correo');
+                    if (emailInput && !validarEmail(emailInput.value)) {
+                        e.preventDefault();
+                        alert('Por favor, ingresa un correo electrónico válido');
+                        emailInput.focus();
+                        return false;
+                    }
+                    
+                    // Validación de contraseñas
+                    const contrasena = document.getElementById('contrasena');
+                    const confirmarContrasena = document.getElementById('confirmar_contrasena');
+                    if (contrasena && confirmarContrasena) {
+                        if (contrasena.value.length < 6) {
+                            e.preventDefault();
+                            alert('La contraseña debe tener al menos 6 caracteres');
+                            contrasena.focus();
+                            return false;
+                        }
+                        
+                        if (contrasena.value !== confirmarContrasena.value) {
+                            e.preventDefault();
+                            alert('Las contraseñas no coinciden');
+                            confirmarContrasena.focus();
+                            return false;
+                        }
+                    }
+                });
+            }
+        });
+        
+        function cerrarModal() {
+            document.getElementById('pinModal').classList.remove('show');
+        }
+    </script>
+</body>
+</html>

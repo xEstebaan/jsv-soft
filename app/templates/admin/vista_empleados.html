@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Gestión de Empleados</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/empleados.css') }}" />
+    <script src="{{ url_for('static', filename='js/empleados.js') }}"></script>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <span class="material-symbols-outlined">shield_person</span>
+                </div>
+                <h1>Panel Administrador</h1>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="{{ url_for('admin.lista_empleados') }}" class="nav-link">
+                    <span class="material-symbols-outlined">group</span>
+                    Empleados
+                </a>
+                <a href="#" class="nav-link">
+                    <span class="material-symbols-outlined">bar_chart</span>
+                    Reportes
+                </a>
+            </nav>
+            <div class="user-profile">
+                <img src="{{ url_for('static', filename='img/usuario.png') }}" alt="User avatar" class="avatar">
+                <div class="user-info">
+                    <p class="user-name">{{ current_user.persona.primer_nombre if current_user.persona else 'Usuario Admin' }}</p>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="header">
+                <h2>Empleados</h2>
+                <a href="{{ url_for('admin.crear_empleado') }}" class="btn-primary">
+                    <span class="material-symbols-outlined">add</span>
+                    <span>Crear empleado</span>
+                </a>
+            </div>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+            
+            <div class="search-container">
+                <div class="search-box">
+                    <span class="material-symbols-outlined search-icon">search</span>
+                    <input type="text" placeholder="Buscar empleados por nombre, cédula o rol..." class="search-input" id="searchInput">
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Número de Cédula</th>
+                            <th>Cargo</th>
+                            <th>Fecha de Creación</th>
+                            <th class="actions-column">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if empleados %}
+                        {% for empleado in empleados %}
+                        <tr>
+                            <td class="name-cell">{{ empleado.primer_nombre }} {{ empleado.segundo_nombre if empleado.segundo_nombre else '' }} {{ empleado.primer_apellido }} {{ empleado.segundo_apellido if empleado.segundo_apellido else '' }}</td>
+                            <td>{{ empleado.documento }}</td>
+                            <td>{{ empleado.cargo }}</td>
+                            <td>{{ empleado.fecha_creacion.strftime('%Y-%m-%d') }}</td>
+                            <td class="actions-cell">
+                                <a href="#" class="action-link">Ver más detalles</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 2rem;">No hay empleados registrados</td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        // Búsqueda en tabla
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('keyup', function() {
+                    const searchValue = this.value.toLowerCase().trim();
+                    const rows = document.querySelectorAll('.data-table tbody tr');
+                    
+                    rows.forEach(row => {
+                        const text = row.textContent.toLowerCase();
+                        if (text.includes(searchValue)) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
