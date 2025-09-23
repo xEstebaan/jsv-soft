@@ -1,86 +1,97 @@
-<!doctype html>
-<html lang="es">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Registra tu Asistencia</title>
+{% extends "base.html" %} {% block title %}Registra tu Asistencia - JSV Soft{%
+endblock %} {% block header_buttons %}
+<a href="{{ url_for('index') }}" class="nav-button">Inicio</a>
+{% if current_user.is_authenticated %}
+<a href="{{ url_for('profile.profile') }}" class="nav-button">Mi Cuenta</a>
+<a href="{{ url_for('auth.logout') }}" class="nav-button nav-button--secondary"
+  >Salir</a
+>
+{% else %}
+<a href="{{ url_for('auth.login') }}" class="nav-button">Iniciar Sesión</a>
+<a href="{{ url_for('auth.register') }}" class="nav-button nav-button--primary"
+  >Registrarse</a
+>
+{% endif %} {% endblock %} {% block stylesheets %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/registro.css') }}"
+/>
+{% endblock %} {% block content %}
+<main class="container">
+  <section class="card">
+    <div class="brand" aria-label="JSV Soft User Management">
+      <img
+        class="brand__logo"
+        src="{{ url_for('static', filename='img/logo.png') }}"
+        alt="JSV Soft • User Management"
+        decoding="async"
+        loading="eager"
+      />
+    </div>
 
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/variables.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/registro.css') }}">
-</head>
-<body class="bg">
-    <nav>
-      <a href="{{ url_for('index') }}">Inicio</a>
-      {% if current_user.is_authenticated %}
-      <span> | Sesión: {{ current_user.get_id() }}</span>
-      <a href="{{ url_for('auth.logout') }}">Salir</a>
-      {% else %}
-      <a href="{{ url_for('auth.login') }}">Entrar</a>
-      <a href="{{ url_for('auth.register') }}">Registro</a>
-      {% endif %}
-    </nav>
-  <main class="container">
-    <section class="card">
-      <div class="brand" aria-label="JSV Soft User Management">
-        <img
-          class="brand__logo"
-          src="{{ url_for('static', filename='img/logo.png') }}"
-          alt="JSV Soft • User Management"
-          decoding="async"
-          loading="eager"
-        />
-      </div>
+    <h1 class="title">Registra tu Asistencia</h1>
+    {%- with messages = get_flashed_messages(with_categories=true) %} {%- if
+    messages %}
+    <div
+      class="flash-messages"
+      role="status"
+      aria-live="polite"
+      style="margin-bottom: var(--space-4)"
+    >
+      {%- for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+      {%- endfor %}
+    </div>
+    {%- endif %} {%- endwith %}
+    <p id="current-date" class="date"></p>
 
-      <h1 class="title">Registra tu Asistencia</h1>
-      {%- with messages = get_flashed_messages(with_categories=true) %}
-      {%- if messages %}
-      <div class="flash-messages" role="status" aria-live="polite" style="margin-bottom: var(--space-4);">
-        {%- for category, message in messages %}
-        <div class="alert alert-{{ category }}">{{ message }}</div>
-        {%- endfor %}
-      </div>
-      {%- endif %}
-      {%- endwith %}
-      <p id="current-date" class="date"></p>
+    <div class="clock-wrapper" aria-live="polite">
+      <div class="clock" id="clock">00:00:00</div>
+    </div>
 
-      <div class="clock-wrapper" aria-live="polite">
-        <div class="clock" id="clock">00:00:00</div>
-      </div>
+    <p class="helper">Ingrese su PIN para registrar su asistencia</p>
 
-      <p class="helper">Ingrese su PIN para registrar su asistencia</p>
-
-      <form method="post" action="{{ url_for('registro.index') }}">
-        <div class="field">
-          <label for="pin" class="label">PIN de acceso</label>
-          <div class="input-with-icon">
-            <input
-              type="password"
-              id="pin"
-              name="pin"
-              placeholder="Ingresa tu pin de acceso"
-              inputmode="numeric"
-              autocomplete="one-time-code"
-              required
-              class="input"
-            />
-          </div>
+    <form method="post" action="{{ url_for('registro.index') }}">
+      <div class="field">
+        <label for="pin" class="label">PIN de acceso</label>
+        <div class="input-with-icon">
+          <input
+            type="password"
+            id="pin"
+            name="pin"
+            placeholder="Ingresa tu pin de acceso"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            required
+            class="input"
+          />
         </div>
+      </div>
 
-        <div class="actions">
-          <button class="btn btn-primary" type="submit" name="accion" value="ingreso">
-            Registrar ingreso
-          </button>
-          <button class="btn btn-secondary" type="submit" name="accion" value="salida">
-            Registrar salida
-          </button>
-        </div>
-      </form>
-    </section>
-  </main>
+      <div class="actions">
+        <button
+          class="btn btn-primary"
+          type="submit"
+          name="accion"
+          value="ingreso"
+        >
+          Registrar ingreso
+        </button>
+        <button
+          class="btn btn-secondary"
+          type="submit"
+          name="accion"
+          value="salida"
+        >
+          Registrar salida
+        </button>
+      </div>
+    </form>
+  </section>
+</main>
 
-  <script>
-    window.SERVER_NOW_MS = { server_now_ms };
-  </script>
-  <script src="{{ url_for('static', filename='js/registro.js') }}" defer></script>
-</body>
-</html>
+<script>
+  window.SERVER_NOW_MS = { server_now_ms };
+</script>
+<script src="{{ url_for('static', filename='js/registro.js') }}" defer></script>
+{% endblock %}

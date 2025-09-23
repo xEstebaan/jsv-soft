@@ -1,0 +1,204 @@
+/* ========================================
+   HEADER STYLES - JSV SOFT
+   ======================================== */
+
+/* Header principal */
+.main-header {
+  background-color: var(--header-bg);
+  border-bottom: var(--border-thin) solid var(--header-border);
+  box-shadow: var(--header-shadow);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  width: 100%;
+}
+
+.header-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--header-padding);
+  height: var(--height-header);
+}
+
+/* Logo */
+.header-logo {
+  flex-shrink: 0;
+}
+
+.logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+
+.logo-link:hover {
+  opacity: 0.8;
+}
+
+.logo-img {
+  height: var(--height-logo-desktop);
+  width: auto;
+  max-width: var(--width-logo-max);
+  object-fit: contain;
+}
+
+/* Navegación del header */
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+/* Botones de navegación */
+.nav-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--font-sm);
+  font-weight: var(--font-medium);
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  transition: var(--transition-fast);
+  white-space: nowrap;
+  height: var(--height-button);
+  border: var(--border-thin) solid transparent;
+  background-color: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.nav-button:hover {
+  background-color: var(--card-hover);
+  color: var(--primary);
+  text-decoration: none;
+}
+
+/* Variantes de botones */
+.nav-button--primary {
+  background-color: var(--primary);
+  color: var(--primary-contrast);
+  border-color: var(--primary);
+}
+
+.nav-button--primary:hover {
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+  color: var(--primary-contrast);
+}
+
+.nav-button--secondary {
+  color: var(--text-muted);
+  border-color: var(--border);
+}
+
+.nav-button--secondary:hover {
+  background-color: var(--card-hover);
+  color: var(--error);
+  border-color: var(--error);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .header-container {
+    padding: var(--header-padding-mobile);
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  .header-nav {
+    gap: var(--space-2);
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .nav-button {
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--font-xs);
+    height: 32px;
+  }
+
+  .logo-img {
+    height: var(--height-logo-mobile);
+  }
+}
+
+@media (max-width: 480px) {
+  .header-container {
+    flex-direction: column;
+    align-items: stretch;
+    height: auto;
+    padding: var(--space-3);
+  }
+
+  .header-logo {
+    text-align: center;
+    margin-bottom: var(--space-2);
+  }
+
+  .header-nav {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .nav-button {
+    flex: 1;
+    min-width: 120px;
+    text-align: center;
+  }
+}
+
+/* Estados especiales */
+.main-header.scrolled {
+  box-shadow: var(--shadow-md);
+}
+
+/* Animaciones */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.main-header {
+  animation: fadeInDown 0.3s ease-out;
+}
+
+/* Accesibilidad */
+.nav-button:focus {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+.nav-button:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Reset para evitar conflictos */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+/* Asegurar que el header tenga fondo blanco */
+.main-header {
+  background-color: var(--header-bg) !important;
+  border-bottom: var(--border-thin) solid var(--header-border) !important;
+  box-shadow: var(--header-shadow) !important;
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  width: 100%;
+}

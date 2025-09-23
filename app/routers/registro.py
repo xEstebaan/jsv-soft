@@ -165,4 +165,9 @@ def index():
     for mes_en, mes_es in meses_es.items():
         fecha_actual = fecha_actual.replace(mes_en, mes_es)
 
-    return render_template("registro/registro.html", fecha_actual=fecha_actual)
+    from datetime import datetime
+
+    server_now_ms = int(datetime.now().timestamp() * 1000)
+    return render_template(
+        "registro/registro.html", fecha_actual=fecha_actual, server_now_ms=server_now_ms
+    )
