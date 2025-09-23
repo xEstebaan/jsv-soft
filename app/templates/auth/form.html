@@ -1,12 +1,18 @@
-{% extends "base.html" %} 
-
-{% block title %}{% if form_type == 'login' %}Iniciar sesión{% else %}Crear cuenta{% endif %}{% endblock %} 
-
-{% block stylesheets %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}" />
-{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}{% if form_type == 'login' %}Iniciar
+sesión{% else %}Crear cuenta{% endif %}{% endblock %} {% block header_buttons %}
+<a href="{{ url_for('index') }}" class="nav-button">Inicio</a>
+{% if form_type == 'login' %}
+<a href="{{ url_for('auth.register') }}" class="nav-button nav-button--primary"
+  >Registrarse</a
+>
+{% else %}
+<a href="{{ url_for('auth.login') }}" class="nav-button">Iniciar Sesión</a>
+{% endif %} {% endblock %} {% block stylesheets %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/auth.css') }}"
+/>
+{% endblock %} {% block content %}
 
 <div class="auth-container">
   <div class="auth-card">

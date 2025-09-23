@@ -1,0 +1,86 @@
+{% extends "base.html" %} {% block title %}JSV Soft - Sistema de Gestión de
+Usuarios{% endblock %} {% block stylesheets %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/main.css') }}"
+/>
+{% endblock %} {% block header_buttons %} {% if current_user.is_authenticated %}
+<a href="{{ url_for('index') }}" class="nav-button">Inicio</a>
+<a href="{{ url_for('profile.profile') }}" class="nav-button">Mi Cuenta</a>
+<a href="{{ url_for('auth.logout') }}" class="nav-button nav-button--secondary"
+  >Salir</a
+>
+{% else %}
+<a href="{{ url_for('index') }}" class="nav-button">Inicio</a>
+<a href="{{ url_for('auth.login') }}" class="nav-button">Iniciar Sesión</a>
+<a href="{{ url_for('auth.register') }}" class="nav-button nav-button--primary"
+  >Registrarse</a
+>
+{% endif %} {% endblock %} {% block content %}
+<div class="hero-section">
+  <div class="hero-container">
+    <div class="hero-content">
+      <h1 class="hero-title">Bienvenido a JSV Soft</h1>
+      <p class="hero-subtitle">
+        Sistema de Gestión de Usuarios y Control de Asistencia
+      </p>
+
+      <div class="hero-actions">
+        {% if current_user.is_authenticated %}
+        <a href="{{ url_for('profile.profile') }}" class="btn btn-primary"
+          >Mi Perfil</a
+        >
+        <a href="{{ url_for('registro.index') }}" class="btn btn-secondary"
+          >Registrar Asistencia</a
+        >
+        {% else %}
+        <a href="{{ url_for('auth.login') }}" class="btn btn-primary"
+          >Iniciar Sesión</a
+        >
+        <a href="{{ url_for('auth.register') }}" class="btn btn-secondary"
+          >Crear Cuenta</a
+        >
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="hero-image">
+      <img
+        src="{{ url_for('static', filename='img/logo.png') }}"
+        alt="JSV Soft Logo"
+        class="hero-logo"
+      />
+    </div>
+  </div>
+</div>
+
+<div class="features-section">
+  <div class="features-container">
+    <h2 class="features-title">Características del Sistema</h2>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">👤</div>
+        <h3>Gestión de Usuarios</h3>
+        <p>
+          Administra perfiles de usuarios, roles y permisos de manera eficiente.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">⏰</div>
+        <h3>Control de Asistencia</h3>
+        <p>
+          Registra entradas y salidas con sistema de PIN seguro y confiable.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Reportes</h3>
+        <p>Genera reportes detallados de asistencia y estadísticas de uso.</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

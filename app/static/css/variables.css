@@ -158,12 +158,14 @@
 :root {
   /* Alturas */
   --height-input: 44px;
-  --height-button: 44px;
-  --height-header: 64px;
+  --height-button: 36px;
+  --height-header: 56px;
   --height-logo: 128px;
+  --height-logo-mobile: 40px;
+  --height-logo-desktop: 48px;
 
   /* Anchos */
-  --width-logo-max: 240px;
+  --width-logo-max: 300px;
   --width-modal-max: 500px;
   --width-pin-min: 200px;
   --width-pin-mobile: 140px;
@@ -173,4 +175,11 @@
   --letter-spacing-tight: 0.2px;
   --letter-spacing-normal: 1px;
   --letter-spacing-wide: 2px;
+
+  /* Header específico */
+  --header-bg: #ffffff;
+  --header-border: var(--border);
+  --header-shadow: var(--shadow-sm);
+  --header-padding: var(--space-3) var(--space-6);
+  --header-padding-mobile: var(--space-2) var(--space-4);
 }
