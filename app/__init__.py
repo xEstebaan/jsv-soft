@@ -35,7 +35,7 @@ def create_app():
     def index():
         return render_template("registro/registro.html")
 
-    @app.route("/empleados")
+    @app.route("/admin/empleados")
     def empleados():
         return render_template("admin/vista_empleados.html")
 
