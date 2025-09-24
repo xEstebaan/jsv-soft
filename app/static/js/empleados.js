@@ -9,16 +9,32 @@ function validarEmail(email) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Configuración global de DataTables para traducción al español
+    $.extend(true, $.fn.dataTable.defaults, {
+        language: {
+            url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+        }
+    });
+
     // Verificar si existe la tabla de empleados
     const empleadosTable = document.getElementById('empleadosTable');
     if (empleadosTable) {
-        // Comprobar si DataTables ya está inicializado
         if (!$.fn.dataTable.isDataTable('#empleadosTable')) {
-            // Inicializar DataTable con opciones
             $('#empleadosTable').DataTable({
                 language: {
                     url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json',
-                    search: "Buscar empleados por nombre, cédula o rol..."
+                    search: "Buscar empleados: ",
+                    lengthMenu: "Mostrar _MENU_ registros",
+                    info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                    infoEmpty: "Mostrando 0 a 0 de 0 registros",
+                    infoFiltered: "(filtrado de _MAX_ registros totales)",
+                    paginate: {
+                        first: "Primero",
+                        last: "Último",
+                        next: "Siguiente",
+                        previous: "Anterior"
+                    },
+                    zeroRecords: "No se encontraron registros coincidentes"
                 },
                 responsive: true,
                 lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Todos"]],
@@ -33,18 +49,14 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.btn-ver').forEach(btn => {
             btn.addEventListener('click', function() {
                 const empleadoId = this.getAttribute('data-id');
-                const row = this.closest('tr');
-                const nombre = row.querySelector('.name-cell').textContent.trim();
-                console.log(`Ver detalles del empleado ID: ${empleadoId}, Nombre: ${nombre}`);
+                window.location.href = `/admin/empleados/ver/${empleadoId}`;
             });
         });
 
         document.querySelectorAll('.btn-editar').forEach(btn => {
             btn.addEventListener('click', function() {
                 const empleadoId = this.getAttribute('data-id');
-                const row = this.closest('tr');
-                const nombre = row.querySelector('.name-cell').textContent.trim();
-                console.log(`Editar empleado ID: ${empleadoId}, Nombre: ${nombre}`);
+                window.location.href = `/admin/empleados/editar/${empleadoId}`;
             });
         });
         
@@ -53,7 +65,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 const empleadoId = this.getAttribute('data-id');
                 const row = this.closest('tr');
                 const nombre = row.querySelector('.name-cell').textContent.trim();
-                console.log(`Inactivar empleado ID: ${empleadoId}, Nombre: ${nombre}`);
+                
+                if (confirm(`¿Está seguro que desea inactivar al empleado: ${nombre}?`)) {
+
+                }
             });
         });
     }

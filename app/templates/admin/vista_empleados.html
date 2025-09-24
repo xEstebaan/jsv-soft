@@ -17,6 +17,8 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+    <!-- Asegurarse de que la traducción se cargue correctamente -->
+    <script src="https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"></script>
     <script src="{{ url_for('static', filename='js/empleados.js') }}"></script>
 </head>
 <body>
@@ -72,7 +74,7 @@
                             <th>NOMBRE</th>
                             <th>NÚMERO DE CÉDULA</th>
                             <th>CARGO</th>
-                            <th>FECHA DE CREACIÓN</th>
+                            <th>FECHA DE CONTRATACIÓN</th>
                             <th class="text-center actions-column">ACCIONES</th>
                         </tr>
                     </thead>
@@ -112,36 +114,33 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // DataTable ya se inicializa en el archivo empleados.js
-            // No es necesario inicializarlo aquí para evitar duplicación
-            
-            // Eventos para los botones de acción (sin lógica real, solo visuales)
-            document.querySelectorAll('.btn-ver').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const empleadoId = this.getAttribute('data-id');
-                    const row = this.closest('tr');
-                    const nombre = row.querySelector('.name-cell').textContent.trim();
-                    alert(`Ver detalles del empleado: ${nombre}`);
-                });
-            });
-            
-            document.querySelectorAll('.btn-editar').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const empleadoId = this.getAttribute('data-id');
-                    const row = this.closest('tr');
-                    const nombre = row.querySelector('.name-cell').textContent.trim();
-                    alert(`Editar empleado: ${nombre}`);
-                });
-            });
-            
-            document.querySelectorAll('.btn-inactivar').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const empleadoId = this.getAttribute('data-id');
-                    const row = this.closest('tr');
-                    const nombre = row.querySelector('.name-cell').textContent.trim();
-                    alert(`Inactivar empleado: ${nombre}`);
-                });
-            });
+
+            // Funciones para datatable
+            setTimeout(function() {
+
+                const showEntries = document.querySelector('div.dataTables_length label');
+                if (showEntries && showEntries.textContent.includes('Show')) {
+                    showEntries.innerHTML = showEntries.innerHTML.replace('Show', 'Mostrar')
+                                                                .replace('entries', 'registros');
+                }
+                
+                const info = document.querySelector('div.dataTables_info');
+                if (info && info.textContent.includes('Showing')) {
+                    info.textContent = info.textContent.replace('Showing', 'Mostrando')
+                                                       .replace('to', 'a')
+                                                       .replace('of', 'de')
+                                                       .replace('entries', 'registros');
+                }
+                
+                const prev = document.querySelector('a.paginate_button.previous');
+                const next = document.querySelector('a.paginate_button.next');
+                if (prev && prev.textContent === 'Previous') {
+                    prev.textContent = 'Anterior';
+                }
+                if (next && next.textContent === 'Next') {
+                    next.textContent = 'Siguiente';
+                }
+            }, 100);
         });
     </script>
 </body>

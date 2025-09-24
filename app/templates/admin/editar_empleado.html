@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Editar Empleado</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/empleados.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}" />
+    <script src="{{ url_for('static', filename='js/empleados.js') }}"></script>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <span class="material-symbols-outlined">shield_person</span>
+                </div>
+                <h1>Panel Administrador</h1>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="{{ url_for('admin.lista_empleados') }}" class="nav-link">
+                    <span class="material-symbols-outlined">group</span>
+                    Empleados
+                </a>
+                <a href="#" class="nav-link">
+                    <span class="material-symbols-outlined">bar_chart</span>
+                    Reportes
+                </a>
+            </nav>
+            <div class="user-profile">
+                <img src="{{ url_for('static', filename='img/usuario.png') }}" alt="User avatar" class="avatar">
+                <div class="user-info">
+                    <p class="user-name">{{ current_user.persona.primer_nombre if current_user.persona else 'Usuario Admin' }}</p>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="header">
+                <h2>Editar Empleado</h2>
+                <a href="{{ url_for('admin.lista_empleados') }}" class="btn-secondary btn-back">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                    <span>Volver a la lista</span>
+                </a>
+            </div>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+            
+            <div class="form-container">
+                <form method="post" action="{{ url_for('admin.editar_empleado', empleado_id=empleado.empleado_id) }}">
+                    <input type="hidden" name="id_persona" value="{{ persona.id_persona }}">
+                    
+                    <h3>Información Personal</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="primer_nombre" class="required">Primer Nombre</label>
+                            <input type="text" id="primer_nombre" name="primer_nombre" class="form-control" value="{{ persona.primer_nombre }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="segundo_nombre">Segundo Nombre</label>
+                            <input type="text" id="segundo_nombre" name="segundo_nombre" class="form-control" value="{{ persona.segundo_nombre or '' }}">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="primer_apellido" class="required">Primer Apellido</label>
+                            <input type="text" id="primer_apellido" name="primer_apellido" class="form-control" value="{{ persona.primer_apellido }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="segundo_apellido">Segundo Apellido</label>
+                            <input type="text" id="segundo_apellido" name="segundo_apellido" class="form-control" value="{{ persona.segundo_apellido or '' }}">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="documento" class="required">Número de Documento</label>
+                            <input type="text" id="documento" name="documento" class="form-control" value="{{ persona.documento }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="correo" class="required">Correo Electrónico</label>
+                            <input type="email" id="correo" name="correo" class="form-control" value="{{ persona.correo }}" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" title="Por favor, ingresa un correo electrónico válido (ejemplo: nombre@dominio.com)" required>
+                            <small class="form-text text-muted">Formato: ejemplo@dominio.com</small>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="celular">Número de Celular</label>
+                        <input type="text" id="celular" name="celular" class="form-control" value="{{ persona.celular or '' }}">
+                    </div>
+                    
+                    <h3>Información de Acceso</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contrasena">Contraseña <small class="text-muted">(dejar en blanco para mantener la actual)</small></label>
+                            <input type="password" id="contrasena" name="contrasena" class="form-control">
+                            <small class="form-text text-muted">La contraseña debe tener al menos 6 caracteres.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmar_contrasena">Confirmar Contraseña</label>
+                            <input type="password" id="confirmar_contrasena" name="confirmar_contrasena" class="form-control">
+                        </div>
+                    </div>
+                    
+                    <h3>Información Laboral</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cargo_id" class="required">Cargo</label>
+                            <select id="cargo_id" name="cargo_id" class="form-control" required>
+                                <option value="">Seleccione un cargo</option>
+                                {% for cargo in cargos %}
+                                <option value="{{ cargo.id_cargo }}" {% if cargo.id_cargo == empleado.cargo_id %}selected{% endif %}>{{ cargo.descripcion }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="fecha_contratacion" class="required">Fecha de Contratación</label>
+                            <input type="date" id="fecha_contratacion" name="fecha_contratacion" class="form-control" value="{{ empleado.fecha_contratacion.strftime('%Y-%m-%d') }}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="btn-container">
+                        <a href="{{ url_for('admin.lista_empleados') }}" class="btn-secondary">Cancelar</a>
+                        <button type="submit" class="btn-primary">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    // Validación de correo electrónico
+                    const emailInput = document.getElementById('correo');
+                    if (emailInput && !validarEmail(emailInput.value)) {
+                        e.preventDefault();
+                        alert('Por favor, ingresa un correo electrónico válido');
+                        emailInput.focus();
+                        return false;
+                    }
+                    
+                    // Validación de contraseñas solo si se está intentando cambiarlas
+                    const contrasena = document.getElementById('contrasena');
+                    const confirmarContrasena = document.getElementById('confirmar_contrasena');
+                    if (contrasena && confirmarContrasena && contrasena.value.trim() !== '') {
+                        if (contrasena.value.length < 6) {
+                            e.preventDefault();
+                            alert('La contraseña debe tener al menos 6 caracteres');
+                            contrasena.focus();
+                            return false;
+                        }
+                        
+                        if (contrasena.value !== confirmarContrasena.value) {
+                            e.preventDefault();
+                            alert('Las contraseñas no coinciden');
+                            confirmarContrasena.focus();
+                            return false;
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

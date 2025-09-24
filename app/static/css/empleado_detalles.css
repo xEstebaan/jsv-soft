@@ -1,0 +1,59 @@
+/* Estilos específicos para la vista de detalles */
+.detail-group {
+    margin-bottom: 1.5rem;
+    flex: 1;
+}
+
+.detail-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--text-dark);
+}
+
+.detail-group p {
+    font-size: 1rem;
+    padding: 0.6rem;
+    margin: 0;
+    background-color: var(--bg-light);
+    border-radius: 4px;
+    min-height: 2.5rem;
+    line-height: 1.5;
+}
+
+.credential-value {
+    font-family: monospace;
+    letter-spacing: 1px;
+    font-weight: 600;
+    font-size: 1.1rem !important;
+}
+
+.credential-status {
+    font-weight: 600;
+}
+
+.credential-status.active {
+    color: var(--success-color);
+}
+
+.credential-status.inactive {
+    color: var(--error-color);
+}
+
+.no-credential {
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.detail-section h3 {
+    color: var(--primary-color);
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-light);
+}
+
+:root {
+    --success-color: #28a745;
+    --error-color: #dc3545;
+}
