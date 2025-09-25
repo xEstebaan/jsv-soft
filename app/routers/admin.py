@@ -38,70 +38,31 @@ def lista_empleados():
                      Persona.fecha_creacion,
                      CargoEmpleado.descripcion.label('cargo'),
                      Empleado.empleado_id,
-                     Empleado.fecha_contratacion
+                     Empleado.fecha_contratacion,
+                     Empleado.id_persona
                  )
                  .all())
     
-    return render_template('admin/vista_empleados.html', empleados=empleados)
-
-# Ruta temporalmente deshabilitada
-"""
-@admin_bp.route('/empleados/detalles/<int:empleado_id>', methods=['GET'])
-def obtener_detalles_empleado(empleado_id):
-    try:
-        # Obtener el empleado
-        empleado_db = Empleado.query.get_or_404(empleado_id)
+    # Obtenemos información sobre las credenciales de cada empleado
+    empleados_con_credenciales = []
+    for emp in empleados:
+        credencial = (Credencial.query
+                     .join(TipoCredencial)
+                     .filter(Credencial.id_persona == emp.id_persona,
+                            TipoCredencial.nombre == "PIN")
+                     .first())
         
-        # Obtener la persona relacionada
-        persona = Persona.query.get_or_404(empleado_db.id_persona)
+        tiene_credencial = credencial is not None
+        credencial_activa = tiene_credencial and credencial.activo
         
-        # Obtener el cargo
-        cargo = CargoEmpleado.query.get_or_404(empleado_db.cargo_id)
-
-        # Calcular el tiempo en la empresa
-        fecha_contratacion = empleado_db.fecha_contratacion
-        hoy = datetime.now().date()
-        delta = hoy - fecha_contratacion
-        anios = delta.days // 365
-        meses = (delta.days % 365) // 30
-        
-        tiempo_empresa = ""
-        if anios > 0:
-            tiempo_empresa += f"{anios} año{'s' if anios != 1 else ''}"
-        if meses > 0:
-            tiempo_empresa += f"{' y ' if tiempo_empresa else ''}{meses} mes{'es' if meses != 1 else ''}"
-        if not tiempo_empresa:
-            tiempo_empresa = "Menos de un mes"
-        
-        # Construir nombre completo
-        nombre_completo = f"{persona.primer_nombre}"
-        if persona.segundo_nombre:
-            nombre_completo += f" {persona.segundo_nombre}"
-        nombre_completo += f" {persona.primer_apellido}"
-        if persona.segundo_apellido:
-            nombre_completo += f" {persona.segundo_apellido}"
-        
-        # Construir respuesta
-        respuesta = {
-            "empleado_id": empleado_db.empleado_id,
-            "nombre_completo": nombre_completo,
-            "primer_nombre": persona.primer_nombre,
-            "segundo_nombre": persona.segundo_nombre,
-            "primer_apellido": persona.primer_apellido,
-            "segundo_apellido": persona.segundo_apellido,
-            "documento": persona.documento,
-            "correo": persona.correo,
-            "celular": persona.celular if persona.celular else "No registrado",
-            "cargo": cargo.descripcion,
-            "fecha_contratacion": empleado_db.fecha_contratacion.strftime('%Y-%m-%d'),
-            "tiempo_empresa": tiempo_empresa
-        }
-        
-        return jsonify(respuesta)
+        empleados_con_credenciales.append({
+            'info': emp,
+            'tiene_credencial': tiene_credencial,
+            'credencial_activa': credencial_activa
+        })
     
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-"""
+    return render_template('admin/vista_empleados.html', empleados_con_credenciales=empleados_con_credenciales)
+
 
 @admin_bp.route('/empleados/crear', methods=['GET', 'POST'])
 def crear_empleado():
@@ -205,7 +166,6 @@ def crear_empleado():
             # Crear un usuario para el empleado (para poder iniciar sesión)
             usuario = Usuario(
                 id_persona=persona.id_persona,
-                # ID 2 para rol de empleado (según inicializar_roles en init_db.py)
                 id_rol=2,  
                 contrasena=generate_password_hash(contrasena)
             )
@@ -224,7 +184,7 @@ def crear_empleado():
     return render_template('admin/crear_empleado.html', cargos=cargos)
 
 def generate_pin(primer_nombre):
-    # Genera un PIN
+    # Función para generar pin
     nombre_seguro = primer_nombre.strip().upper()
     while len(nombre_seguro) < 3:
         nombre_seguro += 'X'
@@ -379,3 +339,42 @@ def editar_empleado(empleado_id):
             flash(f'Error al actualizar el empleado: {str(e)}', 'error')
     
     return render_template('admin/editar_empleado.html', empleado=empleado, persona=persona, cargos=cargos)
+    
+@admin_bp.route('/empleados/credencial/<int:empleado_id>/toggle', methods=['POST'])
+def toggle_credencial_empleado(empleado_id):
+    try:
+        # Obtener el empleado
+        empleado = Empleado.query.get_or_404(empleado_id)
+        persona = Persona.query.get_or_404(empleado.id_persona)
+        
+        # Buscar la credencial PIN del empleado
+        credencial = (Credencial.query
+                     .join(TipoCredencial)
+                     .filter(Credencial.id_persona == persona.id_persona,
+                            TipoCredencial.nombre == "PIN")
+                     .first())
+        
+        if not credencial:
+            return jsonify({
+                "success": False,
+                "message": "El empleado no tiene una credencial PIN asociada"
+            }), 404
+        
+        # Cambiar el estado de la credencial
+        credencial.activo = not credencial.activo
+        db.session.commit()
+        
+        nuevo_estado = "activada" if credencial.activo else "inactivada"
+        
+        return jsonify({
+            "success": True,
+            "message": f"Credencial {nuevo_estado} exitosamente",
+            "activo": credencial.activo
+        })
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            "success": False,
+            "message": f"Error al actualizar la credencial: {str(e)}"
+        }), 500

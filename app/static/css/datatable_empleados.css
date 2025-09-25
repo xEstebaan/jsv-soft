@@ -156,3 +156,20 @@
 .btn-crear-empleado:hover {
     background-color: #0b5ed7;
 }
+
+/* Estilos para los botones de estado de credencial */
+.btn-toggle-credencial.activa {
+    background-color: #198754;
+    color: white;
+}
+
+.btn-toggle-credencial.inactiva {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-no-credencial {
+    background-color: #6c757d;
+    color: white;
+    cursor: not-allowed;
+}

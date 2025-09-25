@@ -60,14 +60,54 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
         
-        document.querySelectorAll('.btn-inactivar').forEach(btn => {
+        document.querySelectorAll('.btn-toggle-credencial').forEach(btn => {
             btn.addEventListener('click', function() {
                 const empleadoId = this.getAttribute('data-id');
                 const row = this.closest('tr');
                 const nombre = row.querySelector('.name-cell').textContent.trim();
+                const esActiva = this.classList.contains('activa');
+                const accion = esActiva ? 'desactivar' : 'activar';
                 
-                if (confirm(`¿Está seguro que desea inactivar al empleado: ${nombre}?`)) {
-
+                if (confirm(`¿Está seguro que desea ${accion} la credencial de ${nombre}?`)) {
+                    // Hacer la solicitud AJAX para cambiar el estado de la credencial
+                    fetch(`/admin/empleados/credencial/${empleadoId}/toggle`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error al cambiar el estado de la credencial');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            // Actualizar el botón según el nuevo estado
+                            if (data.activo) {
+                                this.classList.remove('inactiva');
+                                this.classList.add('activa');
+                                this.setAttribute('title', 'Desactivar credencial');
+                                this.querySelector('span').textContent = 'badge';
+                            } else {
+                                this.classList.remove('activa');
+                                this.classList.add('inactiva');
+                                this.setAttribute('title', 'Activar credencial');
+                                this.querySelector('span').textContent = 'no_accounts';
+                            }
+                            
+                            // Mostrar mensaje de éxito
+                            alert(data.message);
+                        } else {
+                            alert('Error: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('No se pudo cambiar el estado de la credencial');
+                    });
                 }
             });
         });

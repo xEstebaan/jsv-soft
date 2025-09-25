@@ -79,8 +79,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% if empleados %}
-                        {% for empleado in empleados %}
+                        {% if empleados_con_credenciales %}
+                        {% for item in empleados_con_credenciales %}
+                        {% set empleado = item.info %}
                         <tr>
                             <td class="name-cell">{{ empleado.primer_nombre }} {{ empleado.segundo_nombre if empleado.segundo_nombre else '' }} {{ empleado.primer_apellido }} {{ empleado.segundo_apellido if empleado.segundo_apellido else '' }}</td>
                             <td>{{ empleado.documento }}</td>
@@ -94,9 +95,17 @@
                                     <button type="button" class="btn btn-action btn-editar" data-id="{{ empleado.empleado_id }}" title="Editar">
                                         <span class="material-symbols-outlined">edit</span>
                                     </button>
-                                    <button type="button" class="btn btn-action btn-inactivar" data-id="{{ empleado.empleado_id }}" title="Inactivar">
-                                        <span class="material-symbols-outlined">delete</span>
-                                    </button>
+                                    {% if item.tiene_credencial %}
+                                        <button type="button" class="btn btn-action btn-toggle-credencial {% if item.credencial_activa %}activa{% else %}inactiva{% endif %}" 
+                                                data-id="{{ empleado.empleado_id }}" 
+                                                title="{% if item.credencial_activa %}Desactivar credencial{% else %}Activar credencial{% endif %}">
+                                            <span class="material-symbols-outlined">{% if item.credencial_activa %}badge{% else %}no_accounts{% endif %}</span>
+                                        </button>
+                                    {% else %}
+                                        <button type="button" class="btn btn-action btn-no-credencial" title="Sin credencial" disabled>
+                                            <span class="material-symbols-outlined">not_interested</span>
+                                        </button>
+                                    {% endif %}
                                 </div>
                             </td>
                         </tr>

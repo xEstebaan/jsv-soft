@@ -1,5 +1,7 @@
-{% extends "base.html" %} {% block title %}Registra tu Asistencia - JSV Soft{%
-endblock %} {% block header_buttons %}
+{% extends "base.html" %}
+{% set hide_global_messages = true %}
+{% block title %}Registra tu Asistencia - JSV Soft{% endblock %} 
+{% block header_buttons %}
 <a href="{{ url_for('index') }}" class="nav-button">Inicio</a>
 {% if current_user.is_authenticated %}
 <a href="{{ url_for('profile.profile') }}" class="nav-button">Mi Cuenta</a>
