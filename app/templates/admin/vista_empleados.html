@@ -113,15 +113,22 @@
               {% if empleados_con_credenciales %} {% for item in
               empleados_con_credenciales %} {% set empleado = item.info %}
               <tr>
-                <td class="name-cell">
+                <td
+                  class="name-cell"
+                  title="{{ empleado.primer_nombre }} {{ empleado.segundo_nombre if empleado.segundo_nombre else '' }} {{ empleado.primer_apellido }} {{ empleado.segundo_apellido if empleado.segundo_apellido else '' }}"
+                >
                   {{ empleado.primer_nombre }} {{ empleado.segundo_nombre if
                   empleado.segundo_nombre else '' }} {{ empleado.primer_apellido
                   }} {{ empleado.segundo_apellido if empleado.segundo_apellido
                   else '' }}
                 </td>
-                <td>{{ empleado.documento }}</td>
-                <td>{{ empleado.cargo }}</td>
-                <td>
+                <td title="{{ empleado.documento }}">
+                  {{ empleado.documento }}
+                </td>
+                <td title="{{ empleado.cargo }}">{{ empleado.cargo }}</td>
+                <td
+                  title="{{ empleado.fecha_contratacion.strftime('%Y-%m-%d') if empleado.fecha_contratacion else empleado.fecha_creacion.strftime('%Y-%m-%d') }}"
+                >
                   {{ empleado.fecha_contratacion.strftime('%Y-%m-%d') if
                   empleado.fecha_contratacion else
                   empleado.fecha_creacion.strftime('%Y-%m-%d') }}
