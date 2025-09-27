@@ -26,7 +26,12 @@ def login():
         if usuario and check_password_hash(usuario.contrasena, form.contrasena.data):
             login_user(usuario, remember=form.recordar.data)
             next_page = request.args.get("next")
-            return redirect(next_page or url_for("profile.profile"))
+
+            # Redirección condicional basada en el rol del usuario
+            if usuario.id_rol == 1:  # Administrador
+                return redirect(next_page or url_for("admin.lista_empleados"))
+            else:  # Empleado o Visitante
+                return redirect(next_page or url_for("profile.profile"))
         flash("Credenciales inválidas", "danger")
     return render_template("auth/form.html", form=form, form_type="login")
 
@@ -73,7 +78,7 @@ def register():
             # Crear usuario
             usuario = Usuario(
                 id_persona=persona.id_persona,
-                id_rol=2,
+                id_rol=3,  # Rol de Visitante por defecto
                 contrasena=generate_password_hash(form.contrasena.data),
             )
             db.session.add(usuario)

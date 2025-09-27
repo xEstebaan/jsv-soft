@@ -3,7 +3,7 @@ sesión{% else %}Crear cuenta{% endif %}{% endblock %} {% block header_buttons %
 <a href="{{ url_for('index') }}" class="nav-button">Inicio</a>
 {% if form_type == 'login' %}
 <a href="{{ url_for('auth.register') }}" class="nav-button nav-button--primary"
-  >Registrarse</a
+  >¿Eres visitante?</a
 >
 {% else %}
 <a href="{{ url_for('auth.login') }}" class="nav-button">Iniciar Sesión</a>
@@ -82,8 +82,8 @@ sesión{% else %}Crear cuenta{% endif %}{% endblock %} {% block header_buttons %
     </form>
 
     <p class="helper">
-      {% if form_type == 'login' %} ¿No tienes una cuenta?
-      <a href="{{ url_for('auth.register') }}">Regístrate</a> {% else %} ¿Ya
+      {% if form_type == 'login' %} ¿Eres visitante?
+      <a href="{{ url_for('auth.register') }}">Crear cuenta</a> {% else %} ¿Ya
       tienes cuenta? <a href="{{ url_for('auth.login') }}">Inicia sesión</a>
       {% endif %}
     </p>

@@ -69,6 +69,10 @@
               {{ current_user.persona.primer_nombre if current_user.persona else
               'Usuario Admin' }}
             </p>
+            <a href="{{ url_for('auth.logout') }}" class="logout-btn">
+              <span class="material-symbols-outlined">logout</span>
+              Cerrar Sesión
+            </a>
           </div>
         </div>
       </aside>
