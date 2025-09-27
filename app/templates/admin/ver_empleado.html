@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Detalles de Empleado</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/empleados.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/empleado_detalles.css') }}" />
+    <script src="{{ url_for('static', filename='js/empleados.js') }}"></script>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <span class="material-symbols-outlined">shield_person</span>
+                </div>
+                <h1>Panel Administrador</h1>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="{{ url_for('admin.lista_empleados') }}" class="nav-link">
+                    <span class="material-symbols-outlined">group</span>
+                    Empleados
+                </a>
+                <a href="#" class="nav-link">
+                    <span class="material-symbols-outlined">bar_chart</span>
+                    Reportes
+                </a>
+            </nav>
+            <div class="user-profile">
+                <img src="{{ url_for('static', filename='img/usuario.png') }}" alt="User avatar" class="avatar">
+                <div class="user-info">
+                    <p class="user-name">{{ current_user.persona.primer_nombre if current_user.persona else 'Usuario Admin' }}</p>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="header">
+                <h2>Detalles del Empleado</h2>
+                <a href="{{ url_for('admin.lista_empleados') }}" class="btn-secondary btn-back">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                    <span>Volver a la lista</span>
+                </a>
+            </div>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+            
+            <div class="form-container">
+                <div class="detail-section">
+                    <h3>Información Personal</h3>
+                    <div class="form-row">
+                        <div class="detail-group">
+                            <label>Primer Nombre</label>
+                            <p>{{ persona.primer_nombre }}</p>
+                        </div>
+                        <div class="detail-group">
+                            <label>Segundo Nombre</label>
+                            <p>{{ persona.segundo_nombre or 'No registrado' }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="detail-group">
+                            <label>Primer Apellido</label>
+                            <p>{{ persona.primer_apellido }}</p>
+                        </div>
+                        <div class="detail-group">
+                            <label>Segundo Apellido</label>
+                            <p>{{ persona.segundo_apellido or 'No registrado' }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="detail-group">
+                            <label>Número de Documento</label>
+                            <p>{{ persona.documento }}</p>
+                        </div>
+                        <div class="detail-group">
+                            <label>Correo Electrónico</label>
+                            <p>{{ persona.correo }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="detail-group">
+                            <label>Número de Celular</label>
+                            <p>{{ persona.celular or 'No registrado' }}</p>
+                        </div>
+                    </div>
+                    
+                    <h3>Información Laboral</h3>
+                    <div class="form-row">
+                        <div class="detail-group">
+                            <label>Cargo</label>
+                            <p>{{ cargo.descripcion }}</p>
+                        </div>
+                        <div class="detail-group">
+                            <label>Fecha de Contratación</label>
+                            <p>{{ empleado.fecha_contratacion.strftime('%d/%m/%Y') }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="detail-group">
+                            <label>Tiempo en la Empresa</label>
+                            <p>{{ tiempo_empresa }}</p>
+                        </div>
+                    </div>
+                    
+                    <h3>Credenciales</h3>
+                    <div class="form-row">
+                        {% if credencial_pin %}
+                        <div class="detail-group">
+                            <label>PIN</label>
+                            <p class="credential-value">{{ credencial_pin.valor }}</p>
+                        </div>
+                        <div class="detail-group">
+                            <label>Estado</label>
+                            <p class="credential-status {% if credencial_pin.activo %}active{% else %}inactive{% endif %}">
+                                {{ 'Activo' if credencial_pin.activo else 'Inactivo' }}
+                            </p>
+                        </div>
+                        {% else %}
+                        <div class="detail-group">
+                            <p class="no-credential">No tiene credencial PIN registrada</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="btn-container">
+                        <a href="{{ url_for('admin.lista_empleados') }}" class="btn-secondary">Volver</a>
+                        <a href="{{ url_for('admin.editar_empleado', empleado_id=empleado.empleado_id) }}" class="btn-primary">Editar Empleado</a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

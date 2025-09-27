@@ -19,31 +19,63 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='css/variables.css') }}"
     />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/header.css') }}"
+    />
     {% block stylesheets %}{% endblock %}
   </head>
   <body>
-    <nav>
-      <a href="{{ url_for('index') }}">Inicio</a>
-      {% if current_user.is_authenticated %}
-      <span> | Sesión: {{ current_user.get_id() }}</span>
-      {% if current_user.id_rol != 1 %}
-      <a href="{{ url_for('profile.profile') }}">Mi Perfil</a>
-      {% endif %}
-      <a href="{{ url_for('auth.logout') }}">Salir</a>
-      {% else %}
-      <a href="{{ url_for('auth.login') }}">Entrar</a>
-      <a href="{{ url_for('auth.register') }}">Registro</a>
-      {% endif %}
-    </nav>
+    <!-- Header principal -->
+    <header class="main-header">
+      <div class="header-container">
+        <!-- Logo -->
+        <div class="header-logo">
+          <a href="{{ url_for('index') }}" class="logo-link">
+            <img
+              src="{{ url_for('static', filename='img/logo.png') }}"
+              alt="JSV Soft"
+              class="logo-img"
+            />
+          </a>
+        </div>
 
-    {% with messages = get_flashed_messages(with_categories=true) %} {% if
-    messages %}
-    <ul>
-      {% for category, message in messages %}
-      <li>{{ category }}: {{ message }}</li>
-      {% endfor %}
-    </ul>
-    {% endif %} {% endwith %}
+        <!-- Botones de navegación variables -->
+        <nav class="header-nav">
+          {% block header_buttons %} {% if current_user.is_authenticated %}
+          <a href="{{ url_for('profile.profile') }}" class="nav-button"
+            >Mi Cuenta</a
+          >
+          <a
+            href="{{ url_for('auth.logout') }}"
+            class="nav-button nav-button--secondary"
+            >Salir</a
+          >
+          {% else %}
+          <a href="{{ url_for('auth.login') }}" class="nav-button"
+            >Iniciar Sesión</a
+          >
+          <a
+            href="{{ url_for('auth.register') }}"
+            class="nav-button nav-button--primary"
+            >Registrarse</a
+          >
+          {% endif %} {% endblock %}
+        </nav>
+      </div>
+    </header>
+
+    {% if not hide_global_messages %}
+      {% with messages = get_flashed_messages(with_categories=true) %} 
+        {% if messages %}
+        <ul class="global-flash-messages">
+          {% for category, message in messages %}
+          <li class="flash-message flash-message--{{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %} 
+      {% endwith %}
+    {% endif %}
 
     <main>{% block content %}{% endblock %}</main>
   </body>
