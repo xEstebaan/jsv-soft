@@ -281,17 +281,75 @@ def reportes():
     # Ordenar por fecha descendente
     registros = query.order_by(Registro.fecha_hora.desc()).all()
 
-    # Procesar registros para agrupar entradas y salidas
+    # Procesar registros para crear pares de ingreso-salida
     registros_procesados = []
+
+    # Agrupar registros por empleado y fecha
+    registros_por_empleado_fecha = {}
+
     for registro in registros:
-        registros_procesados.append(
-            {
-                "empleado": f"{registro.primer_nombre} {registro.segundo_nombre if registro.segundo_nombre else ''} {registro.primer_apellido} {registro.segundo_apellido if registro.segundo_apellido else ''}".strip(),
-                "fecha": registro.fecha_hora.date(),
-                "hora": registro.fecha_hora.time(),
-                "tipo": registro.tipo_registro,
+        empleado_nombre = f"{registro.primer_nombre} {registro.segundo_nombre if registro.segundo_nombre else ''} {registro.primer_apellido} {registro.segundo_apellido if registro.segundo_apellido else ''}".strip()
+        fecha = registro.fecha_hora.date()
+        hora = registro.fecha_hora.time()
+        tipo = registro.tipo_registro
+
+        # Crear clave única por empleado y fecha
+        clave = f"{empleado_nombre}_{fecha}"
+
+        if clave not in registros_por_empleado_fecha:
+            registros_por_empleado_fecha[clave] = {
+                "empleado": empleado_nombre,
+                "fecha": fecha,
+                "ingresos": [],
+                "salidas": [],
             }
-        )
+
+        # Agregar a la lista correspondiente
+        if tipo == "Ingreso":
+            registros_por_empleado_fecha[clave]["ingresos"].append(hora)
+        elif tipo == "Salida":
+            registros_por_empleado_fecha[clave]["salidas"].append(hora)
+
+    # Crear pares de ingreso-salida
+    for clave, datos in registros_por_empleado_fecha.items():
+        ingresos = sorted(datos["ingresos"])
+        salidas = sorted(datos["salidas"])
+
+        # Crear un par por cada ingreso
+        for i, ingreso in enumerate(ingresos):
+            # Buscar la salida correspondiente (la siguiente salida después del ingreso)
+            salida_correspondiente = None
+            for salida in salidas:
+                if salida > ingreso:
+                    salida_correspondiente = salida
+                    # Remover esta salida de la lista para evitar reutilizarla
+                    salidas.remove(salida)
+                    break
+
+            registros_procesados.append(
+                {
+                    "empleado": datos["empleado"],
+                    "fecha": datos["fecha"],
+                    "hora_entrada": ingreso,
+                    "hora_salida": salida_correspondiente,
+                }
+            )
+
+        # Si quedan salidas sin ingreso correspondiente, crear registros con "Sin registrar" en entrada
+        for salida in salidas:
+            registros_procesados.append(
+                {
+                    "empleado": datos["empleado"],
+                    "fecha": datos["fecha"],
+                    "hora_entrada": None,
+                    "hora_salida": salida,
+                }
+            )
+
+    # Ordenar por fecha descendente y luego por hora de entrada
+    registros_procesados.sort(
+        key=lambda x: (x["fecha"], x["hora_entrada"] or x["hora_salida"]), reverse=True
+    )
 
     # Calcular métricas
     total_empleados = len(empleados)

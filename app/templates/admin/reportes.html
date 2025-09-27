@@ -185,12 +185,14 @@
                 <td class="name-cell">{{ registro.empleado }}</td>
                 <td>{{ registro.fecha.strftime('%Y-%m-%d') }}</td>
                 <td>
-                  {% if registro.tipo == 'Ingreso' %} {{
-                  registro.hora.strftime('%H:%M') }} {% else %} - {% endif %}
+                  {% if registro.hora_entrada %} {{
+                  registro.hora_entrada.strftime('%H:%M') }} {% else %} Sin
+                  registrar {% endif %}
                 </td>
                 <td>
-                  {% if registro.tipo == 'Salida' %} {{
-                  registro.hora.strftime('%H:%M') }} {% else %} - {% endif %}
+                  {% if registro.hora_salida %} {{
+                  registro.hora_salida.strftime('%H:%M') }} {% else %} Sin
+                  registrar {% endif %}
                 </td>
               </tr>
               {% endfor %} {% else %}
