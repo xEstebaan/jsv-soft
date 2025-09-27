@@ -235,6 +235,21 @@ def reportes():
     fecha_inicio = request.args.get("fecha_inicio")
     fecha_fin = request.args.get("fecha_fin")
 
+    # Validar fechas
+    if fecha_inicio and fecha_fin:
+        try:
+            fecha_inicio_obj = datetime.strptime(fecha_inicio, "%Y-%m-%d").date()
+            fecha_fin_obj = datetime.strptime(fecha_fin, "%Y-%m-%d").date()
+
+            if fecha_inicio_obj > fecha_fin_obj:
+                # Si la fecha de inicio es mayor que la fecha de fin, intercambiar las fechas
+                fecha_inicio, fecha_fin = fecha_fin, fecha_inicio
+                fecha_inicio_obj, fecha_fin_obj = fecha_fin_obj, fecha_inicio_obj
+        except ValueError:
+            # Si hay error en el formato de fechas, limpiar las fechas
+            fecha_inicio = None
+            fecha_fin = None
+
     # Construir consulta base para registros
     query = (
         Registro.query.join(Persona, Registro.id_persona == Persona.id_persona)
@@ -272,11 +287,15 @@ def reportes():
 
     if fecha_inicio:
         fecha_inicio_obj = datetime.strptime(fecha_inicio, "%Y-%m-%d").date()
-        query = query.filter(Registro.fecha_hora >= fecha_inicio_obj)
+        # Convertir a datetime para comparación precisa
+        fecha_inicio_datetime = datetime.combine(fecha_inicio_obj, datetime.min.time())
+        query = query.filter(Registro.fecha_hora >= fecha_inicio_datetime)
 
     if fecha_fin:
+        # Para la fecha fin, incluir todo el día (hasta las 23:59:59)
         fecha_fin_obj = datetime.strptime(fecha_fin, "%Y-%m-%d").date()
-        query = query.filter(Registro.fecha_hora <= fecha_fin_obj)
+        fecha_fin_completa = datetime.combine(fecha_fin_obj, datetime.max.time())
+        query = query.filter(Registro.fecha_hora <= fecha_fin_completa)
 
     # Ordenar por fecha descendente
     registros = query.order_by(Registro.fecha_hora.desc()).all()
@@ -346,8 +365,24 @@ def reportes():
                 }
             )
 
+    # Filtrar registros procesados para asegurar que estén dentro del rango de fechas
+    registros_filtrados = []
+    for registro in registros_procesados:
+        fecha_registro = registro["fecha"]
+
+        # Verificar que la fecha esté dentro del rango especificado
+        fecha_valida = True
+
+        if fecha_inicio and fecha_registro < fecha_inicio_obj:
+            fecha_valida = False
+        if fecha_fin and fecha_registro > fecha_fin_obj:
+            fecha_valida = False
+
+        if fecha_valida:
+            registros_filtrados.append(registro)
+
     # Ordenar por fecha descendente y luego por hora de entrada
-    registros_procesados.sort(
+    registros_filtrados.sort(
         key=lambda x: (x["fecha"], x["hora_entrada"] or x["hora_salida"]), reverse=True
     )
 
@@ -363,7 +398,7 @@ def reportes():
 
     return render_template(
         "admin/reportes.html",
-        registros=registros_procesados,
+        registros=registros_filtrados,
         total_empleados=total_empleados,
         entradas_hoy=entradas_hoy,
         salidas_hoy=salidas_hoy,

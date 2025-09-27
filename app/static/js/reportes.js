@@ -54,8 +54,11 @@ document.addEventListener("DOMContentLoaded", function () {
   // Validación de fechas en el formulario de filtros
   const fechaInicio = document.getElementById("fecha_inicio");
   const fechaFin = document.getElementById("fecha_fin");
+  const formFiltros = document.querySelector(".filters-form");
 
-  if (fechaInicio && fechaFin) {
+  if (fechaInicio && fechaFin && formFiltros) {
+    let fechasValidas = true;
+
     // Validar que la fecha de inicio no sea mayor que la fecha de fin
     function validarFechas() {
       const inicio = new Date(fechaInicio.value);
@@ -66,10 +69,24 @@ document.addEventListener("DOMContentLoaded", function () {
           "La fecha de fin debe ser mayor o igual a la fecha de inicio"
         );
         fechaFin.reportValidity();
+        fechasValidas = false;
       } else {
         fechaFin.setCustomValidity("");
+        fechasValidas = true;
       }
     }
+
+    // Prevenir envío del formulario si las fechas son inválidas
+    formFiltros.addEventListener("submit", function (e) {
+      validarFechas();
+      if (!fechasValidas) {
+        e.preventDefault();
+        alert(
+          "Por favor, corrija las fechas antes de buscar. La fecha de inicio no puede ser mayor que la fecha de fin."
+        );
+        return false;
+      }
+    });
 
     fechaInicio.addEventListener("change", validarFechas);
     fechaFin.addEventListener("change", validarFechas);

@@ -198,7 +198,36 @@
               {% endfor %} {% else %}
               <tr>
                 <td colspan="4" style="text-align: center; padding: 2rem">
-                  No hay registros para mostrar
+                  {% if fecha_inicio or fecha_fin %}
+                  <div style="color: #666; font-style: italic">
+                    <i
+                      class="material-symbols-outlined"
+                      style="font-size: 48px; color: #ccc; margin-bottom: 1rem"
+                      >event_busy</i
+                    >
+                    <br />
+                    No se encontraron registros para el rango de fechas
+                    seleccionado {% if fecha_inicio and fecha_fin %}
+                    <br /><small
+                      >Del {{ fecha_inicio }} al {{ fecha_fin }}</small
+                    >
+                    {% elif fecha_inicio %}
+                    <br /><small>Desde el {{ fecha_inicio }}</small>
+                    {% elif fecha_fin %}
+                    <br /><small>Hasta el {{ fecha_fin }}</small>
+                    {% endif %}
+                  </div>
+                  {% else %}
+                  <div style="color: #666; font-style: italic">
+                    <i
+                      class="material-symbols-outlined"
+                      style="font-size: 48px; color: #ccc; margin-bottom: 1rem"
+                      >event_busy</i
+                    >
+                    <br />
+                    No hay registros para mostrar
+                  </div>
+                  {% endif %}
                 </td>
               </tr>
               {% endif %}
