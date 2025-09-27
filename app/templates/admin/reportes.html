@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Gestión de Empleados</title>
+    <title>Reportes de Entrada y Salida</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap"
       rel="stylesheet"
@@ -30,6 +30,10 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='css/datatable_empleados.css') }}"
     />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/reportes.css') }}"
+    />
 
     <!-- jQuery y DataTables JS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -37,7 +41,7 @@
     <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
     <!-- Asegurarse de que la traducción se cargue correctamente -->
     <script src="https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"></script>
-    <script src="{{ url_for('static', filename='js/empleados.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/reportes.js') }}"></script>
   </head>
   <body>
     <div class="container">
@@ -53,7 +57,7 @@
             <span class="material-symbols-outlined">group</span>
             Empleados
           </a>
-          <a href="{{ url_for('admin.reportes') }}" class="nav-link">
+          <a href="{{ url_for('admin.reportes') }}" class="nav-link active">
             <span class="material-symbols-outlined">bar_chart</span>
             Reportes
           </a>
@@ -75,14 +79,7 @@
 
       <main class="main-content">
         <div class="header">
-          <h2>Empleados</h2>
-          <a
-            href="{{ url_for('admin.crear_empleado') }}"
-            class="btn-crear-empleado"
-          >
-            <span class="material-symbols-outlined">add</span>
-            <span>Crear empleado</span>
-          </a>
+          <h2>Reportes</h2>
         </div>
 
         {% with messages = get_flashed_messages(with_categories=true) %} {% if
@@ -90,87 +87,116 @@
         <div class="alert alert-{{ category }}">{{ message }}</div>
         {% endfor %} {% endif %} {% endwith %}
 
+        <!-- Métricas -->
+        <div class="metrics-section">
+          <h3>Métricas</h3>
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-value">{{ total_empleados }}</div>
+              <div class="metric-label">Total Empleados</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-value">{{ entradas_hoy }}</div>
+              <div class="metric-label">Entradas Hoy</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-value">{{ salidas_hoy }}</div>
+              <div class="metric-label">Salidas Hoy</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="filters-section">
+          <h3>Historial de Entradas y Salidas</h3>
+          <form method="GET" class="filters-form">
+            <div class="filters-row">
+              <div class="filter-group">
+                <label for="busqueda_nombre">Buscar por Nombre</label>
+                <div class="search-input-container">
+                  <span class="material-symbols-outlined search-icon"
+                    >search</span
+                  >
+                  <input
+                    type="text"
+                    name="busqueda_nombre"
+                    id="busqueda_nombre"
+                    value="{{ busqueda_nombre or '' }}"
+                    placeholder="Escriba el nombre del empleado..."
+                    class="form-control search-input"
+                  />
+                </div>
+              </div>
+              <div class="filter-group">
+                <label for="fecha_inicio">Fecha Inicio</label>
+                <input
+                  type="date"
+                  name="fecha_inicio"
+                  id="fecha_inicio"
+                  value="{{ fecha_inicio or '' }}"
+                  class="form-control"
+                />
+              </div>
+              <div class="filter-group">
+                <label for="fecha_fin">Fecha Fin</label>
+                <input
+                  type="date"
+                  name="fecha_fin"
+                  id="fecha_fin"
+                  value="{{ fecha_fin or '' }}"
+                  class="form-control"
+                />
+              </div>
+              <div class="filter-group">
+                <button type="submit" class="btn-primary">
+                  <span class="material-symbols-outlined">search</span>
+                  Buscar
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Tabla de registros -->
         <div class="table-container">
+          <div class="table-header">
+            <h4>Registros de Entrada y Salida</h4>
+            <button class="btn-secondary" id="generar-excel" disabled>
+              <span class="material-symbols-outlined">download</span>
+              Generar Excel
+            </button>
+          </div>
           <table
-            id="empleadosTable"
+            id="registrosTable"
             class="table table-hover custom-datatable"
             style="width: 100%"
           >
             <thead>
               <tr>
-                <th>NOMBRE</th>
-                <th>NÚMERO DE CÉDULA</th>
-                <th>CARGO</th>
-                <th>FECHA DE CONTRATACIÓN</th>
-                <th class="text-center actions-column">ACCIONES</th>
+                <th>Empleado</th>
+                <th>Fecha</th>
+                <th>Hora de Entrada</th>
+                <th>Hora de Salida</th>
               </tr>
             </thead>
             <tbody>
-              {% if empleados_con_credenciales %} {% for item in
-              empleados_con_credenciales %} {% set empleado = item.info %}
+              {% if registros %} {% for registro in registros %}
               <tr>
-                <td class="name-cell">
-                  {{ empleado.primer_nombre }} {{ empleado.segundo_nombre if
-                  empleado.segundo_nombre else '' }} {{ empleado.primer_apellido
-                  }} {{ empleado.segundo_apellido if empleado.segundo_apellido
-                  else '' }}
-                </td>
-                <td>{{ empleado.documento }}</td>
-                <td>{{ empleado.cargo }}</td>
+                <td class="name-cell">{{ registro.empleado }}</td>
+                <td>{{ registro.fecha.strftime('%Y-%m-%d') }}</td>
                 <td>
-                  {{ empleado.fecha_contratacion.strftime('%Y-%m-%d') if
-                  empleado.fecha_contratacion else
-                  empleado.fecha_creacion.strftime('%Y-%m-%d') }}
+                  {% if registro.tipo == 'Ingreso' %} {{
+                  registro.hora.strftime('%H:%M') }} {% else %} - {% endif %}
                 </td>
-                <td class="actions-cell text-center">
-                  <div class="action-buttons">
-                    <button
-                      type="button"
-                      class="btn btn-action btn-ver"
-                      data-id="{{ empleado.empleado_id }}"
-                      title="Ver detalles"
-                    >
-                      <span class="material-symbols-outlined">visibility</span>
-                    </button>
-                    <button
-                      type="button"
-                      class="btn btn-action btn-editar"
-                      data-id="{{ empleado.empleado_id }}"
-                      title="Editar"
-                    >
-                      <span class="material-symbols-outlined">edit</span>
-                    </button>
-                    {% if item.tiene_credencial %}
-                    <button
-                      type="button"
-                      class="btn btn-action btn-toggle-credencial {% if item.credencial_activa %}activa{% else %}inactiva{% endif %}"
-                      data-id="{{ empleado.empleado_id }}"
-                      title="{% if item.credencial_activa %}Desactivar credencial{% else %}Activar credencial{% endif %}"
-                    >
-                      <span class="material-symbols-outlined"
-                        >{% if item.credencial_activa %}badge{% else
-                        %}no_accounts{% endif %}</span
-                      >
-                    </button>
-                    {% else %}
-                    <button
-                      type="button"
-                      class="btn btn-action btn-no-credencial"
-                      title="Sin credencial"
-                      disabled
-                    >
-                      <span class="material-symbols-outlined"
-                        >not_interested</span
-                      >
-                    </button>
-                    {% endif %}
-                  </div>
+                <td>
+                  {% if registro.tipo == 'Salida' %} {{
+                  registro.hora.strftime('%H:%M') }} {% else %} - {% endif %}
                 </td>
               </tr>
               {% endfor %} {% else %}
               <tr>
-                <td colspan="5" style="text-align: center; padding: 2rem">
-                  No hay empleados registrados
+                <td colspan="4" style="text-align: center; padding: 2rem">
+                  No hay registros para mostrar
                 </td>
               </tr>
               {% endif %}

@@ -22,22 +22,18 @@ def create_app():
     migrate.init_app(app, db)
 
     from .routers.auth import auth_bp
-    from .routers.profile import profile_bp
     from .routers.registro import registro_bp
     from .routers.admin import admin_bp
+    from .routers.profile import profile_bp
 
     app.register_blueprint(auth_bp)
-    app.register_blueprint(profile_bp)
     app.register_blueprint(registro_bp)
     app.register_blueprint(admin_bp)
+    app.register_blueprint(profile_bp)
 
     @app.route("/")
     def index():
         return render_template("registro/registro.html")
-
-    @app.route("/admin/empleados")
-    def empleados():
-        return render_template("admin/vista_empleados.html")
 
     @app.route("/favicon.ico")
     def favicon():
@@ -48,6 +44,7 @@ def create_app():
         )
 
     return app
+
 
 @login_manager.user_loader
 def load_user(user_id):
