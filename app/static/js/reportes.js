@@ -42,15 +42,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Manejar el botón de generar Excel
-  const generarExcelBtn = document.getElementById("generar-excel");
-  if (generarExcelBtn) {
-    generarExcelBtn.addEventListener("click", function () {
-      // Por ahora solo mostrar un mensaje, la funcionalidad se implementará después
-      alert("La funcionalidad de generar Excel se implementará próximamente.");
-    });
-  }
-
   // Validación de fechas en el formulario de filtros
   const fechaInicio = document.getElementById("fecha_inicio");
   const fechaFin = document.getElementById("fecha_fin");
