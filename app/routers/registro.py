@@ -11,6 +11,7 @@ from flask import (
 from datetime import datetime
 from app import db
 from app.models.credencial import Credencial
+from app.models.tipo_credencial import TipoCredencial
 from app.models.registro import Registro
 from app.models.tipo_registro import TipoRegistro
 from app.models.persona import Persona
@@ -32,9 +33,16 @@ def index():
             return redirect(url_for("registro.index"))
 
         # Buscar la credencial asociada con el PIN
-        credencial = Credencial.query.filter_by(
-            valor=pin, activo=True, id_tipo_credencial=1  # ID correcto para tipo 'PIN'
-        ).first()
+        credencial = (
+            db.session.query(Credencial)
+            .join(TipoCredencial, Credencial.id_tipo_credencial == TipoCredencial.id_tipo_credencial)
+            .filter(
+                Credencial.valor == pin,
+                Credencial.activo == True,
+                TipoCredencial.nombre == "PIN"
+            )
+            .first()
+        )
 
         if not credencial:
             flash("Credencial no reconocida o inactiva", "error")
