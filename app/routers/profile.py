@@ -11,6 +11,7 @@ from ..models import (
     Registro,
     TipoRegistro,
     Empleado,
+    CargoEmpleado,
 )
 
 profile_bp = Blueprint("profile", __name__)
@@ -31,8 +32,12 @@ def profile():
     # Obtener datos de la persona asociada al usuario
     persona = Persona.query.get(current_user.id_persona)
 
-    # Obtener datos del empleado
-    empleado = Empleado.query.filter_by(id_persona=current_user.id_persona).first()
+    # Obtener datos del empleado con la relación del cargo cargada
+    empleado = (
+        Empleado.query.join(CargoEmpleado, Empleado.cargo_id == CargoEmpleado.id_cargo)
+        .filter(Empleado.id_persona == current_user.id_persona)
+        .first()
+    )
 
     # Obtener el PIN del usuario
     pin_credencial = (

@@ -1,18 +1,36 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Gestión de Empleados</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
-    
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+      rel="stylesheet"
+    />
+
     <!-- Bootstrap y DataTables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/empleados.css') }}" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/datatable_empleados.css') }}" />
-    
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/empleados.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/datatable_empleados.css') }}"
+    />
+
     <!-- jQuery y DataTables JS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
@@ -20,137 +38,191 @@
     <!-- Asegurarse de que la traducción se cargue correctamente -->
     <script src="https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"></script>
     <script src="{{ url_for('static', filename='js/empleados.js') }}"></script>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="logo-container">
-                    <span class="material-symbols-outlined">shield_person</span>
-                </div>
-                <h1>Panel Administrador</h1>
-            </div>
-            <nav class="sidebar-nav">
-                <a href="{{ url_for('admin.lista_empleados') }}" class="nav-link">
-                    <span class="material-symbols-outlined">group</span>
-                    Empleados
-                </a>
-                <a href="#" class="nav-link">
-                    <span class="material-symbols-outlined">bar_chart</span>
-                    Reportes
-                </a>
-            </nav>
-            <div class="user-profile">
-                <img src="{{ url_for('static', filename='img/usuario.png') }}" alt="User avatar" class="avatar">
-                <div class="user-info">
-                    <p class="user-name">{{ current_user.persona.primer_nombre if current_user.persona else 'Usuario Admin' }}</p>
-                </div>
-            </div>
-        </aside>
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <div class="logo-container">
+            <span class="material-symbols-outlined">shield_person</span>
+          </div>
+          <h1>Panel Administrador</h1>
+        </div>
+        <nav class="sidebar-nav">
+          <a href="{{ url_for('admin.lista_empleados') }}" class="nav-link">
+            <span class="material-symbols-outlined">group</span>
+            Empleados
+          </a>
+          <a href="{{ url_for('admin.reportes') }}" class="nav-link">
+            <span class="material-symbols-outlined">bar_chart</span>
+            Reportes
+          </a>
+        </nav>
+        <div class="user-profile">
+          <img
+            src="{{ url_for('static', filename='img/usuario.png') }}"
+            alt="User avatar"
+            class="avatar"
+          />
+          <div class="user-info">
+            <p class="user-name">
+              {{ current_user.persona.primer_nombre if current_user.persona else
+              'Usuario Admin' }}
+            </p>
+            <a href="{{ url_for('auth.logout') }}" class="logout-btn">
+              <span class="material-symbols-outlined">logout</span>
+              Cerrar Sesión
+            </a>
+          </div>
+        </div>
+      </aside>
 
-        <main class="main-content">
-            <div class="header">
-                <h2>Empleados</h2>
-                <a href="{{ url_for('admin.crear_empleado') }}" class="btn-crear-empleado">
-                    <span class="material-symbols-outlined">add</span>
-                    <span>Crear empleado</span>
-                </a>
-            </div>
-            
-            {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-            {% for category, message in messages %}
-            <div class="alert alert-{{ category }}">
-                {{ message }}
-            </div>
-            {% endfor %}
-            {% endif %}
-            {% endwith %}
-            
-            <div class="table-container">
-                <table id="empleadosTable" class="table table-hover custom-datatable" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th>NOMBRE</th>
-                            <th>NÚMERO DE CÉDULA</th>
-                            <th>CARGO</th>
-                            <th>FECHA DE CONTRATACIÓN</th>
-                            <th class="text-center actions-column">ACCIONES</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% if empleados_con_credenciales %}
-                        {% for item in empleados_con_credenciales %}
-                        {% set empleado = item.info %}
-                        <tr>
-                            <td class="name-cell">{{ empleado.primer_nombre }} {{ empleado.segundo_nombre if empleado.segundo_nombre else '' }} {{ empleado.primer_apellido }} {{ empleado.segundo_apellido if empleado.segundo_apellido else '' }}</td>
-                            <td>{{ empleado.documento }}</td>
-                            <td>{{ empleado.cargo }}</td>
-                            <td>{{ empleado.fecha_contratacion.strftime('%Y-%m-%d') if empleado.fecha_contratacion else empleado.fecha_creacion.strftime('%Y-%m-%d') }}</td>
-                            <td class="actions-cell text-center">
-                                <div class="action-buttons">
-                                    <button type="button" class="btn btn-action btn-ver" data-id="{{ empleado.empleado_id }}" title="Ver detalles">
-                                        <span class="material-symbols-outlined">visibility</span>
-                                    </button>
-                                    <button type="button" class="btn btn-action btn-editar" data-id="{{ empleado.empleado_id }}" title="Editar">
-                                        <span class="material-symbols-outlined">edit</span>
-                                    </button>
-                                    {% if item.tiene_credencial %}
-                                        <button type="button" class="btn btn-action btn-toggle-credencial {% if item.credencial_activa %}activa{% else %}inactiva{% endif %}" 
-                                                data-id="{{ empleado.empleado_id }}" 
-                                                title="{% if item.credencial_activa %}Desactivar credencial{% else %}Activar credencial{% endif %}">
-                                            <span class="material-symbols-outlined">{% if item.credencial_activa %}badge{% else %}no_accounts{% endif %}</span>
-                                        </button>
-                                    {% else %}
-                                        <button type="button" class="btn btn-action btn-no-credencial" title="Sin credencial" disabled>
-                                            <span class="material-symbols-outlined">not_interested</span>
-                                        </button>
-                                    {% endif %}
-                                </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                        {% else %}
-                        <tr>
-                            <td colspan="5" style="text-align: center; padding: 2rem;">No hay empleados registrados</td>
-                        </tr>
-                        {% endif %}
-                    </tbody>
-                </table>
-            </div>
-        </main>
+      <main class="main-content">
+        <div class="header">
+          <h2>Empleados</h2>
+          <a
+            href="{{ url_for('admin.crear_empleado') }}"
+            class="btn-crear-empleado"
+          >
+            <span class="material-symbols-outlined">add</span>
+            <span>Crear empleado</span>
+          </a>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if
+        messages %} {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %} {% endif %} {% endwith %}
+
+        <div class="table-container">
+          <table
+            id="empleadosTable"
+            class="table table-hover custom-datatable"
+            style="width: 100%"
+          >
+            <thead>
+              <tr>
+                <th>NOMBRE</th>
+                <th>NÚMERO DE CÉDULA</th>
+                <th>CARGO</th>
+                <th>FECHA DE CONTRATACIÓN</th>
+                <th class="text-center actions-column">ACCIONES</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% if empleados_con_credenciales %} {% for item in
+              empleados_con_credenciales %} {% set empleado = item.info %}
+              <tr>
+                <td
+                  class="name-cell"
+                  title="{{ empleado.primer_nombre }} {{ empleado.segundo_nombre if empleado.segundo_nombre else '' }} {{ empleado.primer_apellido }} {{ empleado.segundo_apellido if empleado.segundo_apellido else '' }}"
+                >
+                  {{ empleado.primer_nombre }} {{ empleado.segundo_nombre if
+                  empleado.segundo_nombre else '' }} {{ empleado.primer_apellido
+                  }} {{ empleado.segundo_apellido if empleado.segundo_apellido
+                  else '' }}
+                </td>
+                <td title="{{ empleado.documento }}">
+                  {{ empleado.documento }}
+                </td>
+                <td title="{{ empleado.cargo }}">{{ empleado.cargo }}</td>
+                <td
+                  title="{{ empleado.fecha_contratacion.strftime('%Y-%m-%d') if empleado.fecha_contratacion else empleado.fecha_creacion.strftime('%Y-%m-%d') }}"
+                >
+                  {{ empleado.fecha_contratacion.strftime('%Y-%m-%d') if
+                  empleado.fecha_contratacion else
+                  empleado.fecha_creacion.strftime('%Y-%m-%d') }}
+                </td>
+                <td class="actions-cell text-center">
+                  <div class="action-buttons">
+                    <button
+                      type="button"
+                      class="btn btn-action btn-ver"
+                      data-id="{{ empleado.empleado_id }}"
+                      title="Ver detalles"
+                    >
+                      <span class="material-symbols-outlined">visibility</span>
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-action btn-editar"
+                      data-id="{{ empleado.empleado_id }}"
+                      title="Editar"
+                    >
+                      <span class="material-symbols-outlined">edit</span>
+                    </button>
+                    {% if item.tiene_credencial %}
+                    <button
+                      type="button"
+                      class="btn btn-action btn-toggle-credencial {% if item.credencial_activa %}activa{% else %}inactiva{% endif %}"
+                      data-id="{{ empleado.empleado_id }}"
+                      title="{% if item.credencial_activa %}Desactivar credencial{% else %}Activar credencial{% endif %}"
+                    >
+                      <span class="material-symbols-outlined"
+                        >{% if item.credencial_activa %}badge{% else
+                        %}no_accounts{% endif %}</span
+                      >
+                    </button>
+                    {% else %}
+                    <button
+                      type="button"
+                      class="btn btn-action btn-no-credencial"
+                      title="Sin credencial"
+                      disabled
+                    >
+                      <span class="material-symbols-outlined"
+                        >not_interested</span
+                      >
+                    </button>
+                    {% endif %}
+                  </div>
+                </td>
+              </tr>
+              {% endfor %} {% else %}
+              <tr>
+                <td colspan="5" style="text-align: center; padding: 2rem">
+                  No hay empleados registrados
+                </td>
+              </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </main>
     </div>
-    
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+      document.addEventListener("DOMContentLoaded", function () {
+        // Funciones para datatable
+        setTimeout(function () {
+          const showEntries = document.querySelector(
+            "div.dataTables_length label"
+          );
+          if (showEntries && showEntries.textContent.includes("Show")) {
+            showEntries.innerHTML = showEntries.innerHTML
+              .replace("Show", "Mostrar")
+              .replace("entries", "registros");
+          }
 
-            // Funciones para datatable
-            setTimeout(function() {
+          const info = document.querySelector("div.dataTables_info");
+          if (info && info.textContent.includes("Showing")) {
+            info.textContent = info.textContent
+              .replace("Showing", "Mostrando")
+              .replace("to", "a")
+              .replace("of", "de")
+              .replace("entries", "registros");
+          }
 
-                const showEntries = document.querySelector('div.dataTables_length label');
-                if (showEntries && showEntries.textContent.includes('Show')) {
-                    showEntries.innerHTML = showEntries.innerHTML.replace('Show', 'Mostrar')
-                                                                .replace('entries', 'registros');
-                }
-                
-                const info = document.querySelector('div.dataTables_info');
-                if (info && info.textContent.includes('Showing')) {
-                    info.textContent = info.textContent.replace('Showing', 'Mostrando')
-                                                       .replace('to', 'a')
-                                                       .replace('of', 'de')
-                                                       .replace('entries', 'registros');
-                }
-                
-                const prev = document.querySelector('a.paginate_button.previous');
-                const next = document.querySelector('a.paginate_button.next');
-                if (prev && prev.textContent === 'Previous') {
-                    prev.textContent = 'Anterior';
-                }
-                if (next && next.textContent === 'Next') {
-                    next.textContent = 'Siguiente';
-                }
-            }, 100);
-        });
+          const prev = document.querySelector("a.paginate_button.previous");
+          const next = document.querySelector("a.paginate_button.next");
+          if (prev && prev.textContent === "Previous") {
+            prev.textContent = "Anterior";
+          }
+          if (next && next.textContent === "Next") {
+            next.textContent = "Siguiente";
+          }
+        }, 100);
+      });
     </script>
-</body>
+  </body>
 </html>

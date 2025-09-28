@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Reportes de Entrada y Salida</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+      rel="stylesheet"
+    />
+
+    <!-- Bootstrap y DataTables CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/empleados.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/datatable_empleados.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/reportes.css') }}"
+    />
+
+    <!-- jQuery y DataTables JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+    <!-- Asegurarse de que la traducción se cargue correctamente -->
+    <script src="https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"></script>
+    <script src="{{ url_for('static', filename='js/reportes.js') }}"></script>
+  </head>
+  <body>
+    <div class="container">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <div class="logo-container">
+            <span class="material-symbols-outlined">shield_person</span>
+          </div>
+          <h1>Panel Administrador</h1>
+        </div>
+        <nav class="sidebar-nav">
+          <a href="{{ url_for('admin.lista_empleados') }}" class="nav-link">
+            <span class="material-symbols-outlined">group</span>
+            Empleados
+          </a>
+          <a href="{{ url_for('admin.reportes') }}" class="nav-link active">
+            <span class="material-symbols-outlined">bar_chart</span>
+            Reportes
+          </a>
+        </nav>
+        <div class="user-profile">
+          <img
+            src="{{ url_for('static', filename='img/usuario.png') }}"
+            alt="User avatar"
+            class="avatar"
+          />
+          <div class="user-info">
+            <p class="user-name">
+              {{ current_user.persona.primer_nombre if current_user.persona else
+              'Usuario Admin' }}
+            </p>
+            <a href="{{ url_for('auth.logout') }}" class="logout-btn">
+              <span class="material-symbols-outlined">logout</span>
+              Cerrar Sesión
+            </a>
+          </div>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <div class="header">
+          <h2>Reportes</h2>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if
+        messages %} {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %} {% endif %} {% endwith %}
+
+        <!-- Métricas -->
+        <div class="metrics-section">
+          <h3>Métricas</h3>
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-value">{{ total_empleados }}</div>
+              <div class="metric-label">Total Empleados</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-value">{{ entradas_hoy }}</div>
+              <div class="metric-label">Entradas Hoy</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-value">{{ salidas_hoy }}</div>
+              <div class="metric-label">Salidas Hoy</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="filters-section">
+          <h3>Historial de Entradas y Salidas</h3>
+          <form method="GET" class="filters-form">
+            <div class="filters-row">
+              <div class="filter-group">
+                <label for="busqueda_nombre">Buscar por Nombre</label>
+                <div class="search-input-container">
+                  <span class="material-symbols-outlined search-icon"
+                    >search</span
+                  >
+                  <input
+                    type="text"
+                    name="busqueda_nombre"
+                    id="busqueda_nombre"
+                    value="{{ busqueda_nombre or '' }}"
+                    placeholder="Escriba el nombre del empleado..."
+                    class="form-control search-input"
+                  />
+                </div>
+              </div>
+              <div class="filter-group">
+                <label for="fecha_inicio">Fecha Inicio</label>
+                <input
+                  type="date"
+                  name="fecha_inicio"
+                  id="fecha_inicio"
+                  value="{{ fecha_inicio or '' }}"
+                  class="form-control"
+                />
+              </div>
+              <div class="filter-group">
+                <label for="fecha_fin">Fecha Fin</label>
+                <input
+                  type="date"
+                  name="fecha_fin"
+                  id="fecha_fin"
+                  value="{{ fecha_fin or '' }}"
+                  class="form-control"
+                />
+              </div>
+              <div class="filter-group">
+                <button type="submit" class="btn-primary">
+                  <span class="material-symbols-outlined">search</span>
+                  Buscar
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Tabla de registros -->
+        <div class="table-container">
+          <div class="table-header">
+            <h4>Registros de Entrada y Salida</h4>
+          </div>
+          <table
+            id="registrosTable"
+            class="table table-hover custom-datatable"
+            style="width: 100%"
+          >
+            <thead>
+              <tr>
+                <th>Empleado</th>
+                <th>Fecha</th>
+                <th>Hora de Entrada</th>
+                <th>Hora de Salida</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% if registros %} {% for registro in registros %}
+              <tr>
+                <td class="name-cell">{{ registro.empleado }}</td>
+                <td>{{ registro.fecha.strftime('%Y-%m-%d') }}</td>
+                <td>
+                  {% if registro.hora_entrada %} {{
+                  registro.hora_entrada.strftime('%H:%M') }} {% else %} Sin
+                  registrar {% endif %}
+                </td>
+                <td>
+                  {% if registro.hora_salida %} {{
+                  registro.hora_salida.strftime('%H:%M') }} {% else %} Sin
+                  registrar {% endif %}
+                </td>
+              </tr>
+              {% endfor %} {% else %}
+              <tr>
+                <td colspan="4" style="text-align: center; padding: 2rem">
+                  {% if fecha_inicio or fecha_fin %}
+                  <div style="color: #666; font-style: italic">
+                    <i
+                      class="material-symbols-outlined"
+                      style="font-size: 48px; color: #ccc; margin-bottom: 1rem"
+                      >event_busy</i
+                    >
+                    <br />
+                    No se encontraron registros para el rango de fechas
+                    seleccionado {% if fecha_inicio and fecha_fin %}
+                    <br /><small
+                      >Del {{ fecha_inicio }} al {{ fecha_fin }}</small
+                    >
+                    {% elif fecha_inicio %}
+                    <br /><small>Desde el {{ fecha_inicio }}</small>
+                    {% elif fecha_fin %}
+                    <br /><small>Hasta el {{ fecha_fin }}</small>
+                    {% endif %}
+                  </div>
+                  {% else %}
+                  <div style="color: #666; font-style: italic">
+                    <i
+                      class="material-symbols-outlined"
+                      style="font-size: 48px; color: #ccc; margin-bottom: 1rem"
+                      >event_busy</i
+                    >
+                    <br />
+                    No hay registros para mostrar
+                  </div>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Funciones para datatable
+        setTimeout(function () {
+          const showEntries = document.querySelector(
+            "div.dataTables_length label"
+          );
+          if (showEntries && showEntries.textContent.includes("Show")) {
+            showEntries.innerHTML = showEntries.innerHTML
+              .replace("Show", "Mostrar")
+              .replace("entries", "registros");
+          }
+
+          const info = document.querySelector("div.dataTables_info");
+          if (info && info.textContent.includes("Showing")) {
+            info.textContent = info.textContent
+              .replace("Showing", "Mostrando")
+              .replace("to", "a")
+              .replace("of", "de")
+              .replace("entries", "registros");
+          }
+
+          const prev = document.querySelector("a.paginate_button.previous");
+          const next = document.querySelector("a.paginate_button.next");
+          if (prev && prev.textContent === "Previous") {
+            prev.textContent = "Anterior";
+          }
+          if (next && next.textContent === "Next") {
+            next.textContent = "Siguiente";
+          }
+        }, 100);
+      });
+    </script>
+  </body>
+</html>

@@ -26,6 +26,10 @@ def main():
             print("- Tipos de registro: Ingreso (ID: 1), Salida (ID: 2)")
             print("- Roles: Administrador (ID: 1), Empleado (ID: 2), Visitante (ID: 3)")
             print("- Tipos de credencial: PIN (ID: 1)")
+            print(
+                "- Cargos de empleado: Administrador, Operario, Recursos Humanos, etc."
+            )
+            print("- Usuario administrador por defecto (si no existía)")
 
         except Exception as e:
             print(f"❌ Error al inicializar la base de datos: {str(e)}")

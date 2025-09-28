@@ -52,15 +52,14 @@ header_buttons %}
           <div class="data-item">
             <span class="data-label">Cargo</span>
             <span class="data-value"
-              >{{ empleado.cargo.nombre if empleado and empleado.cargo else 'No
-              especificado' }}</span
+              >{{ empleado.cargo.descripcion if empleado and empleado.cargo else
+              'No especificado' }}</span
             >
           </div>
           <div class="data-item">
             <span class="data-label">Fecha de registro</span>
             <span class="data-value"
-              >{{ persona.fecha_creacion.strftime('%d de %B de %Y') if
-              persona.fecha_creacion else 'No disponible' }}</span
+              >{{ persona.fecha_creacion | fecha_es }}</span
             >
           </div>
           <div class="data-item">
