@@ -139,27 +139,22 @@ def index():
 
         return redirect(url_for("registro.index"))
 
-    fecha_actual = datetime.now().strftime("%d-%B-%Y")
-    # Meses al español
+    # Formatear fecha en español
+    now = datetime.now()
     meses_es = {
-        "January": "Enero",
-        "February": "Febrero",
-        "March": "Marzo",
-        "April": "Abril",
-        "May": "Mayo",
-        "June": "Junio",
-        "July": "Julio",
-        "August": "Agosto",
-        "September": "Septiembre",
-        "October": "Octubre",
-        "November": "Noviembre",
-        "December": "Diciembre",
+        1: "enero",
+        2: "febrero",
+        3: "marzo",
+        4: "abril",
+        5: "mayo",
+        6: "junio",
+        7: "julio",
+        8: "agosto",
+        9: "septiembre",
+        10: "octubre",
+        11: "noviembre",
+        12: "diciembre",
     }
-
-    for mes_en, mes_es in meses_es.items():
-        fecha_actual = fecha_actual.replace(mes_en, mes_es)
-
-    for mes_en, mes_es in meses_es.items():
-        fecha_actual = fecha_actual.replace(mes_en, mes_es)
+    fecha_actual = f"{now.day}-{meses_es[now.month]}-{now.year}"
 
     return render_template("registro/registro.html", fecha_actual=fecha_actual)
