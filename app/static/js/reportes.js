@@ -134,12 +134,6 @@ document.addEventListener("DOMContentLoaded", function () {
         botonLimpiar.style.display = "none";
       }
     });
-
-    // Búsqueda en tiempo real (opcional - se puede habilitar más tarde)
-    // busquedaNombre.addEventListener("input", function() {
-    //   // Aquí se podría implementar búsqueda en tiempo real
-    //   // Por ahora se mantiene la búsqueda al enviar el formulario
-    // });
   }
 
   // Establecer fecha de hoy como valor por defecto para fecha de fin si no está establecida

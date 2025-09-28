@@ -1,4 +1,3 @@
-// Header responsive toggle with accessibility
 document.addEventListener("DOMContentLoaded", function () {
   var toggle = document.querySelector(".menu-toggle");
   var nav = document.getElementById("primary-navigation");

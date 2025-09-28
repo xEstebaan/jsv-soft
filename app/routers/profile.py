@@ -183,33 +183,28 @@ def get_history():
                 400,
             )
 
-        # Parse week string (format: YYYY-WWW)
+        # Ajustar para que se muestre la fecha en (formato: YYYY-WWW)
         year, week = week_string.split("-W")
         year = int(year)
         week = int(week)
 
-        # Calculate start and end of week using ISO week format
-        # Use Python's built-in isocalendar for accurate ISO week calculation
-        # Find the first day of the year and calculate the first Monday of ISO week 1
+        # Calcular el rango de fechas para la semana solicitada
+        # Encontrar el primer día del año
         jan_1 = datetime(year, 1, 1)
 
-        # Get the ISO week number of January 1st
+        # Obtener el día de la semana de enero 1
         jan_1_iso_year, jan_1_iso_week, jan_1_weekday = jan_1.isocalendar()
 
-        # If January 1st is in week 52 or 53 of the previous year,
-        # we need to find the first Monday of the current year's week 1
+        # Calcular el primer lunes del año
         if jan_1_iso_week > 1:
-            # Find the first Monday of the current year's week 1
-            # Go to the Monday of the week containing January 4th (which is always in week 1)
             jan_4 = datetime(year, 1, 4)
-            days_to_monday = (jan_4.weekday()) % 7  # Monday is 0
+            days_to_monday = (jan_4.weekday()) % 7
             first_monday = jan_4 - timedelta(days=days_to_monday)
         else:
-            # January 1st is already in week 1, find the Monday of that week
-            days_to_monday = (jan_1.weekday()) % 7  # Monday is 0
+            days_to_monday = (jan_1.weekday()) % 7
             first_monday = jan_1 - timedelta(days=days_to_monday)
 
-        # Calculate the start of the requested week
+        # Calcular el inicio y fin de la semana
         week_start = first_monday + timedelta(weeks=week - 1)
         week_end = week_start + timedelta(days=6, hours=23, minutes=59, seconds=59)
 

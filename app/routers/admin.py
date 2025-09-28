@@ -23,12 +23,17 @@ def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         # Validar el rol del usuario admin
+        if not current_user.is_authenticated or current_user.id_rol != 1:
+            flash("No tienes permisos para acceder a esta sección", "danger")
+            return redirect(url_for("auth.login"))
         return f(*args, **kwargs)
 
     return decorated_function
 
 
 @admin_bp.route("/empleados", methods=["GET"])
+@login_required
+@admin_required
 def lista_empleados():
     # Lista de empleados
     empleados = (
