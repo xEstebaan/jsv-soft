@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
     setExpanded(!isOpen);
   });
 
-  // Close nav when clicking outside on small screens
+  // Cerrar al hacer clic fuera del menú
   document.addEventListener("click", function (e) {
     var isClickInside = nav.contains(e.target) || toggle.contains(e.target);
     if (!isClickInside && nav.classList.contains("is-open")) {
@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  // Close on escape
+  // Cerrar con la tecla Escape
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape" && nav.classList.contains("is-open")) {
       setExpanded(false);

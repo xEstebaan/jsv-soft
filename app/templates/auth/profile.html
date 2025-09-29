@@ -170,7 +170,7 @@ header_buttons %}
   </div>
 
   <script>
-    // Tab functionality
+    // Funcionalidad para las pestañas
     document.addEventListener("DOMContentLoaded", function () {
       const tabButtons = document.querySelectorAll(".tab-button");
       const tabPanels = document.querySelectorAll(".tab-panel");
@@ -179,18 +179,18 @@ header_buttons %}
         button.addEventListener("click", function () {
           const targetTab = this.getAttribute("data-tab");
 
-          // Remove active class from all buttons and panels
+          // Remover el botón activo y el panel activo
           tabButtons.forEach((btn) => btn.classList.remove("active"));
           tabPanels.forEach((panel) => panel.classList.remove("active"));
 
-          // Add active class to clicked button and corresponding panel
+          // Añadir el botón activo y el panel activo
           this.classList.add("active");
           document.getElementById(targetTab).classList.add("active");
         });
       });
     });
 
-    // PIN visibility toggle
+    // Visualizar el pin
     let isPinVisible = false;
 
     function togglePinVisibility() {
@@ -207,7 +207,7 @@ header_buttons %}
       }
     }
 
-    // Password form handling
+    // Funcionalidad para cambiar la contraseña
     document
       .getElementById("password-form")
       .addEventListener("submit", function (e) {
@@ -229,7 +229,7 @@ header_buttons %}
           return;
         }
 
-        // Send data to server
+        // Enviar la solicitud para cambiar la contraseña
         const formData = {
           current_password: currentPassword,
           new_password: newPassword,
@@ -259,11 +259,11 @@ header_buttons %}
           });
       });
 
-    // History functionality
+    // Historial de registros
     const weekSelector = document.getElementById("week-selector");
     const historyTbody = document.getElementById("history-tbody");
 
-    // Set default week to current week
+    // setear la semana actual al cargar la página
     const today = new Date();
     const currentWeek = getWeekString(today);
     weekSelector.value = currentWeek;
@@ -288,7 +288,7 @@ header_buttons %}
     }
 
     function loadHistoryData(weekString) {
-      // Show loading state
+      // Mostrar indicador de carga de los datos
       historyTbody.innerHTML =
         '<tr><td colspan="4" class="loading">Cargando datos...</td></tr>';
 
@@ -329,7 +329,7 @@ header_buttons %}
         return;
       }
 
-      // Group registros by date and create pairs of entrada/salida
+      // Agrupar registros por fecha
       const groupedRegistros = {};
       registros.forEach((registro) => {
         console.log("Procesando registro:", registro);
@@ -338,11 +338,11 @@ header_buttons %}
           groupedRegistros[fecha] = [];
         }
 
-        // Add the registro to the date array
+        // Añadir registro al grupo de la fecha
         groupedRegistros[fecha].push(registro);
       });
 
-      // Sort registros by time within each date
+      // Registros ordenados por fecha
       Object.keys(groupedRegistros).forEach((fecha) => {
         groupedRegistros[fecha].sort(
           (a, b) => new Date(a.fecha_hora) - new Date(b.fecha_hora)
@@ -351,7 +351,7 @@ header_buttons %}
 
       console.log("Registros agrupados:", groupedRegistros);
 
-      // Create table rows - show each entrada/salida pair as a separate row
+      // Crear tablas y filas para cada día
       let html = "";
       Object.keys(groupedRegistros)
         .sort()
@@ -359,7 +359,7 @@ header_buttons %}
           const registrosDelDia = groupedRegistros[fecha];
           const fechaFormatted = new Date(fecha).toLocaleDateString("es-ES");
 
-          // Process registros in pairs
+          // Procesar registros en días pares (entrada y salida)
           for (let i = 0; i < registrosDelDia.length; i += 2) {
             const entrada = registrosDelDia[i];
             const salida = registrosDelDia[i + 1];

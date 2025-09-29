@@ -2,6 +2,7 @@
   document.addEventListener('DOMContentLoaded', function() {
     const pinEl = document.getElementById("pin");
     
+    // Crear contenedor para mensajes flash si no existe
     let flashContainer = document.querySelector('.flash-messages');
     if (!flashContainer) {
       flashContainer = document.createElement("div");
@@ -55,6 +56,7 @@
       }
     }
 
+    // Reloj digital y fecha actual
     (function initClock() {
       const clockEl = document.getElementById('clock') || document.getElementById('relojDigital');
       const dateEl = document.getElementById('current-date');
@@ -86,6 +88,7 @@
         }
       }
 
+      // Inicializar y actualizar cada segundo
       if (baseMs) {
         const offset = Date.now() - baseMs;
         update(baseMs + offset);

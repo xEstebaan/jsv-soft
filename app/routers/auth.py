@@ -16,6 +16,7 @@ def login():
     if current_user.is_authenticated:
         return redirect(url_for("index"))
 
+    # Se valida Si ya hay un usuario autenticado, redirigir al perfil
     form = LoginForm()
     if form.validate_on_submit():
         usuario = (
@@ -73,6 +74,7 @@ def register():
                 celular=form.celular.data or None,
             )
             db.session.add(persona)
+            # Se envian los datos a la base de datos
             db.session.flush()
 
             # Crear usuario
@@ -81,6 +83,7 @@ def register():
                 id_rol=3,  # Rol de Visitante por defecto
                 contrasena=generate_password_hash(form.contrasena.data),
             )
+            # Se envian los datos a la base de datos
             db.session.add(usuario)
 
             # Generar PIN con formato: 3 primeras letras del nombre + 4 números

@@ -244,7 +244,7 @@ def get_history():
             .all()
         )
 
-        # Format the data for JSON response
+        # Formatear los datos para la respuesta
         registros_data = []
         for registro in registros:
             registros_data.append(
