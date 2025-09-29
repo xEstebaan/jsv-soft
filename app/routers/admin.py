@@ -265,6 +265,7 @@ def reportes():
             Persona.primer_apellido,
             Persona.segundo_apellido,
             Registro.fecha_hora,
+            Registro.id_tipo_registro,
             TipoRegistro.descripcion.label("tipo_registro"),
         )
     )
@@ -329,9 +330,9 @@ def reportes():
             }
 
         # Agregar a la lista correspondiente
-        if tipo == "Ingreso":
+        if registro.id_tipo_registro == 1:  # ID 1 = Ingreso
             registros_por_empleado_fecha[clave]["ingresos"].append(hora)
-        elif tipo == "Salida":
+        elif registro.id_tipo_registro == 2:  # ID 2 = Salida
             registros_por_empleado_fecha[clave]["salidas"].append(hora)
 
     # Crear pares de ingreso-salida
@@ -339,36 +340,44 @@ def reportes():
         ingresos = sorted(datos["ingresos"])
         salidas = sorted(datos["salidas"])
 
-        # Crear un par por cada ingreso
-        for i, ingreso in enumerate(ingresos):
-            # Buscar la salida correspondiente (la siguiente salida después del ingreso)
-            salida_correspondiente = None
-            for salida in salidas:
-                if salida > ingreso:
-                    salida_correspondiente = salida
-                    # Remover esta salida de la lista para evitar reutilizarla
-                    salidas.remove(salida)
-                    break
-
+        # Crear registros separados para cada ingreso (todos los ingresos deben mostrarse)
+        for ingreso in ingresos:
             registros_procesados.append(
                 {
                     "empleado": datos["empleado"],
                     "fecha": datos["fecha"],
                     "hora_entrada": ingreso,
-                    "hora_salida": salida_correspondiente,
+                    "hora_salida": None,  # Inicialmente sin salida
                 }
             )
-
-        # Si quedan salidas sin ingreso correspondiente, crear registros con "Sin registrar" en entrada
+            
+        # Crear registros para cada salida que no tenga ingreso correspondiente
         for salida in salidas:
-            registros_procesados.append(
-                {
-                    "empleado": datos["empleado"],
-                    "fecha": datos["fecha"],
-                    "hora_entrada": None,
-                    "hora_salida": salida,
-                }
-            )
+            # Intentar encontrar un registro existente que pueda emparejar con esta salida
+            match_found = False
+            for registro in registros_procesados:
+                # Si es del mismo empleado, misma fecha, tiene entrada pero no tiene salida y la entrada es anterior a la salida
+                if (registro["empleado"] == datos["empleado"] and 
+                    registro["fecha"] == datos["fecha"] and 
+                    registro["hora_entrada"] and 
+                    not registro["hora_salida"] and
+                    registro["hora_entrada"] < salida):
+                    
+                    # Asignar esta salida al registro
+                    registro["hora_salida"] = salida
+                    match_found = True
+                    break
+            
+            # Si no se encontró un registro para emparejar, crear uno nuevo
+            if not match_found:
+                registros_procesados.append(
+                    {
+                        "empleado": datos["empleado"],
+                        "fecha": datos["fecha"],
+                        "hora_entrada": None,
+                        "hora_salida": salida,
+                    }
+                )
 
     # Filtrar registros procesados para asegurar que estén dentro del rango de fechas
     registros_filtrados = []
