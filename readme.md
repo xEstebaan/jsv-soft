@@ -5,7 +5,7 @@ Este proyecto es el desarrollo final para la materia de Base de Datos de la Univ
 ## Tecnologías utilizadas
 
 - **PostgreSQL**: Base de datos relacional.
-- **Flask**: Framework web en Python para la construcción de la API y la interfaz.
+- **Flask**: Framework web en Python para la construcción de la lógica interna del proyecto y la interfaz.
 
 ## Autores
 
